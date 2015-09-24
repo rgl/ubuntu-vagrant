@@ -1,0 +1,38 @@
+# save the log for debugging purposes.
+d-i preseed/late_command string cp /var/log/syslog /target/home/vagrant/preseed.log
+
+d-i debian-installer/locale string en_US.UTF-8
+d-i localechooser/supported-locales multiselect en_US.UTF-8, pt_PT.UTF-8
+
+d-i keyboard-configuration/layoutcode string pt
+d-i console-setup/ask_detect boolean false
+
+d-i mirror/country string manual
+d-i mirror/http/hostname string nl.archive.ubuntu.com
+d-i mirror/http/directory string /ubuntu
+d-i mirror/http/proxy string
+
+d-i clock-setup/utc boolean true
+d-i time/zone string Europe/Lisbon
+
+d-i partman-auto/method string regular
+d-i partman-auto/choose_recipe select atomic
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+d-i grub-installer/only_debian boolean true
+d-i finish-install/reboot_in_progress note
+
+d-i passwd/user-fullname string vagrant
+d-i passwd/username string vagrant
+d-i passwd/user-password password vagrant
+d-i passwd/user-password-again password vagrant
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+
+tasksel tasksel/first multiselect
+d-i pkgsel/include string openssh-server
+d-i pkgsel/upgrade select full-upgrade
+d-i pkgsel/update-policy select none

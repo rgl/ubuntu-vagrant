@@ -1,0 +1,58 @@
+{
+  "variables": {
+    "disk_size": 81920
+  },
+  "builders": [
+    {
+      "name": "amd64-virtualbox",
+      "type": "virtualbox-iso",
+      "guest_os_type": "Ubuntu_64",
+      "guest_additions_mode": "attach",
+      "headless": false,
+      "http_directory": ".",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "2"],
+        ["modifyvm", "{{.Name}}", "--vram", "32"]
+      ],
+      "disk_size": "{{user `disk_size`}}",
+      "hard_drive_interface": "sata",
+      "iso_url": "http://archive.ubuntu.com/ubuntu/dists/utopic/main/installer-amd64/current/images/netboot/mini.iso",
+      "iso_checksum": "4f783f3917ed4c663c9a983f4ee046fc",
+      "iso_checksum_type": "md5",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "60m",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<esc><wait>",
+        "/linux initrd=/initrd.gz",
+        " nofb",
+        " fb=false",
+        " auto=true",
+        " url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
+        " hostname=vagrant",
+        " DEBCONF_DEBUG=5",
+        " --",
+        " nofb",
+        "<enter>"
+      ],
+      "shutdown_command": "echo vagrant | sudo -S poweroff"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo vagrant | sudo -S bash {{.Path}}",
+      "scripts": ["setup.sh"]
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "ubuntu-{{.BuildName}}.box"
+    }
+  ]
+}
