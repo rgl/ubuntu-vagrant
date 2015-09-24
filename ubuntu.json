@@ -1,6 +1,6 @@
 {
   "variables": {
-    "disk_size": 81920
+    "disk_size": "81920"
   },
   "builders": [
     {
@@ -17,8 +17,8 @@
       ],
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
-      "iso_url": "http://archive.ubuntu.com/ubuntu/dists/utopic/main/installer-amd64/current/images/netboot/mini.iso",
-      "iso_checksum": "4f783f3917ed4c663c9a983f4ee046fc",
+      "iso_url": "http://archive.ubuntu.com/ubuntu/dists/vivid/main/installer-amd64/current/images/netboot/mini.iso",
+      "iso_checksum": "3b00a4573b11fb1f85eaa05918971789",
       "iso_checksum_type": "md5",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
