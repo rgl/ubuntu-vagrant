@@ -5,7 +5,7 @@ d-i keyboard-configuration/layoutcode string pt
 d-i console-setup/ask_detect boolean false
 
 d-i mirror/country string manual
-d-i mirror/http/hostname string nl.archive.ubuntu.com
+d-i mirror/http/hostname string pt.archive.ubuntu.com
 d-i mirror/http/directory string /ubuntu
 d-i mirror/http/proxy string
 
