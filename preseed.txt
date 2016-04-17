@@ -1,6 +1,3 @@
-# save the log for debugging purposes.
-d-i preseed/late_command string cp /var/log/syslog /target/home/vagrant/preseed.log
-
 d-i debian-installer/locale string en_US.UTF-8
 d-i localechooser/supported-locales multiselect en_US.UTF-8, pt_PT.UTF-8
 
