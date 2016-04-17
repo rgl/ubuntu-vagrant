@@ -55,4 +55,4 @@ apt-get -y autoremove
 apt-get -y clean
 
 # zero the free disk space -- for better compression of the box file.
-#dd if=/dev/zero of=/EMPTY bs=1M ; rm -f /EMPTY
+dd if=/dev/zero of=/EMPTY bs=1M || true ; rm -f /EMPTY
