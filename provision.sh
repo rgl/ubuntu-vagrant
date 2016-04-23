@@ -12,7 +12,7 @@ usermod -a -G admin vagrant
 gpasswd -d vagrant sudo
 sed -i -e 's,%admin ALL=(ALL) ALL,%admin ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
 
-# installing the vagrant public key.
+# install the vagrant public key.
 # NB vagrant will replace it on the first run.
 install -d -m 700 /home/vagrant/.ssh
 pushd /home/vagrant/.ssh

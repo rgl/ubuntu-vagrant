@@ -1,4 +1,4 @@
-ubuntu-amd64-virtualbox.box: preseed.txt setup.sh ubuntu.json
+ubuntu-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.json
 	rm -f ubuntu-amd64-virtualbox.box
 	packer build ubuntu.json
 	@echo BOX successfully built!
