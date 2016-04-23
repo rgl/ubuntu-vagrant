@@ -1,3 +1,11 @@
+# disable Predictable Network Interface Names (not supported in Vagrant 1.8.1).
+d-i debian-installer/add-kernel-opts string net.ifnames=0
+d-i preseed/late_command string \
+      for i in 1 2 3; do \
+        echo "auto eth$i" >>/target/etc/network/interfaces; \
+        echo "iface eth$i inet manual" >>/target/etc/network/interfaces; \
+      done
+
 d-i debian-installer/locale string en_US.UTF-8
 d-i localechooser/supported-locales multiselect en_US.UTF-8, pt_PT.UTF-8
 

@@ -40,9 +40,8 @@
         " auto=true",
         " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
         " hostname=vagrant",
+        " net.ifnames=0",
         " DEBCONF_DEBUG=5",
-        " ---",
-        " quiet",
         "<enter>"
       ],
       "shutdown_command": "echo vagrant | sudo -S poweroff"
