@@ -31,6 +31,7 @@ while [ ! -f /mnt/VBoxLinuxAdditions.run ]; do sleep 1; done
 REMOVE_INSTALLATION_DIR=0 /mnt/VBoxLinuxAdditions.run --target /tmp/VBoxGuestAdditions
 rm -rf /tmp/VBoxGuestAdditions
 umount /mnt
+eject /dev/sr1
 
 # disable the DNS reverse lookup on the SSH server. this stops it from
 # trying to resolve the client IP address into a DNS domain name, which
