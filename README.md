@@ -2,4 +2,8 @@ This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso 
 
 Currently this targets [Ubuntu 16.04](https://help.ubuntu.com/16.04/installation-guide/amd64/index.html).
 
-Just type `make` and follow the instructions.
+# Usage
+
+Install [Packer](https://www.packer.io/).
+
+Type `make` and follow the instructions.
