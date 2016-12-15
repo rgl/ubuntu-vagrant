@@ -14,10 +14,10 @@
         ["modifyvm", "{{.Name}}", "--memory", "2048"],
         ["modifyvm", "{{.Name}}", "--cpus", "2"],
         ["modifyvm", "{{.Name}}", "--vram", "32"],
-        ["modifyvm", "{{.Name}}", "--nictype1", "virtio"],
-        ["modifyvm", "{{.Name}}", "--nictype2", "virtio"],
-        ["modifyvm", "{{.Name}}", "--nictype3", "virtio"],
-        ["modifyvm", "{{.Name}}", "--nictype4", "virtio"]
+        ["modifyvm", "{{.Name}}", "--nictype1", "82540EM"],
+        ["modifyvm", "{{.Name}}", "--nictype2", "82540EM"],
+        ["modifyvm", "{{.Name}}", "--nictype3", "82540EM"],
+        ["modifyvm", "{{.Name}}", "--nictype4", "82540EM"]
       ],
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
