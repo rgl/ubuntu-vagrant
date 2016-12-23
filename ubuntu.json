@@ -1,10 +1,11 @@
 {
   "variables": {
-    "disk_size": "81920"
+    "disk_size": "81920",
+    "version": "16.04"
   },
   "builders": [
     {
-      "name": "amd64-virtualbox",
+      "name": "ubuntu-{{user `version`}}-amd64-virtualbox",
       "type": "virtualbox-iso",
       "guest_os_type": "Ubuntu_64",
       "guest_additions_mode": "attach",
@@ -59,7 +60,7 @@
   "post-processors": [
     {
       "type": "vagrant",
-      "output": "ubuntu-{{.BuildName}}.box"
+      "output": "{{.BuildName}}.box"
     }
   ]
 }

@@ -4,6 +4,6 @@ Currently this targets [Ubuntu 16.04](https://help.ubuntu.com/16.04/installation
 
 # Usage
 
-Install [Packer](https://www.packer.io/).
+Install [Packer](https://www.packer.io/) and [jq](https://stedolan.github.io/jq/).
 
 Type `make` and follow the instructions.
