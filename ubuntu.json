@@ -1,6 +1,6 @@
 {
   "variables": {
-    "disk_size": "81920",
+    "disk_size": "8192",
     "version": "16.04"
   },
   "builders": [
