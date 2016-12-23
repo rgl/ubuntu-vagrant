@@ -9,7 +9,7 @@
       "type": "virtualbox-iso",
       "guest_os_type": "Ubuntu_64",
       "guest_additions_mode": "attach",
-      "headless": false,
+      "headless": true,
       "http_directory": ".",
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--memory", "2048"],
