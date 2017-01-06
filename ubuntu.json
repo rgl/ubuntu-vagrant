@@ -21,6 +21,9 @@
         ["modifyvm", "{{.Name}}", "--nictype3", "82540EM"],
         ["modifyvm", "{{.Name}}", "--nictype4", "82540EM"]
       ],
+      "vboxmanage_post": [
+        ["storagectl", "{{.Name}}", "--name", "IDE Controller", "--remove"]
+      ],
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
       "iso_url": "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/netboot/mini.iso",
