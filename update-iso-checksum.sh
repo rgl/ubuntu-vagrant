@@ -4,7 +4,7 @@
 # abort this script when a command fails or a unset variable is used and echo
 # the executed commands.
 set -eux
-iso_url=$(jq -r '.builders[0].iso_url' ubuntu.json)
+iso_url=$(jq -r '.variables.iso_url' ubuntu.json)
 iso_checksum_url="$(dirname $(dirname $iso_url))/SHA256SUMS"
 curl -O --silent --show-error $iso_checksum_url
 curl -O --silent --show-error $iso_checksum_url.gpg

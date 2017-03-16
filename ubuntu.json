@@ -1,9 +1,50 @@
 {
   "variables": {
     "disk_size": "8192",
-    "version": "16.04"
+    "version": "16.04",
+    "iso_url": "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/netboot/mini.iso",
+    "iso_checksum": "655d1ec0a7415b4d963e7f2c40e3d56bd135907dda2cedd0c75209ced3a63103",
+    "iso_checksum_type": "sha256"
   },
   "builders": [
+    {
+      "name": "ubuntu-{{user `version`}}-amd64-libvirt",
+      "type": "qemu",
+      "accelerator": "kvm",
+      "qemuargs": [
+        ["-m", "2048"],
+        ["-smp", "2"]
+      ],
+      "headless": true,
+      "http_directory": ".",
+      "format": "qcow2",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_interface": "virtio",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "60m",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<tab>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "linux initrd=initrd.gz",
+        " auto=true",
+        " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
+        " hostname=vagrant",
+        " net.ifnames=0",
+        " DEBCONF_DEBUG=5",
+        "<enter>"
+      ],
+      "shutdown_command": "echo vagrant | sudo -S poweroff"
+    },
     {
       "name": "ubuntu-{{user `version`}}-amd64-virtualbox",
       "type": "virtualbox-iso",
@@ -26,9 +67,9 @@
       ],
       "disk_size": "{{user `disk_size`}}",
       "hard_drive_interface": "sata",
-      "iso_url": "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/netboot/mini.iso",
-      "iso_checksum": "655d1ec0a7415b4d963e7f2c40e3d56bd135907dda2cedd0c75209ced3a63103",
-      "iso_checksum_type": "sha256",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "60m",
@@ -52,7 +93,6 @@
       "shutdown_command": "echo vagrant | sudo -S poweroff"
     }
   ],
-
   "provisioners": [
     {
       "type": "shell",
@@ -60,11 +100,11 @@
       "scripts": ["provision.sh"]
     }
   ],
-
   "post-processors": [
     {
       "type": "vagrant",
-      "output": "{{.BuildName}}.box"
+      "output": "{{.BuildName}}.box",
+      "vagrantfile_template": "Vagrantfile.template"
     }
   ]
 }

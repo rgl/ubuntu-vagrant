@@ -20,6 +20,8 @@ wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys
 chmod 600 ~/.ssh/authorized_keys
 chown -R vagrant:vagrant .
 
+# install the Guest Additions.
+if [ -n "$(lspci | grep VirtualBox)" ]; then
 # install the VirtualBox Guest Additions.
 # this will be installed at /opt/VBoxGuestAdditions-VERSION.
 # REMOVE_INSTALLATION_DIR=0 is to fix a bug in VBoxLinuxAdditions.run.
@@ -32,6 +34,13 @@ REMOVE_INSTALLATION_DIR=0 /mnt/VBoxLinuxAdditions.run --target /tmp/VBoxGuestAdd
 rm -rf /tmp/VBoxGuestAdditions
 umount /mnt
 eject /dev/sr1
+else
+# install the qemu-kvm Guest Additions.
+apt-get install -y qemu-guest-agent spice-vdagent
+fi
+
+# install rsync to support "rsync shared" folders in vagrant.
+apt-get install -y rsync
 
 # disable the DNS reverse lookup on the SSH server. this stops it from
 # trying to resolve the client IP address into a DNS domain name, which
