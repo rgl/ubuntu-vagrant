@@ -39,6 +39,7 @@ REMOVE_INSTALLATION_DIR=0 /mnt/VBoxLinuxAdditions.run --target /tmp/VBoxGuestAdd
 rm -rf /tmp/VBoxGuestAdditions
 umount /mnt
 eject /dev/sr1
+modinfo vboxguest
 else
 # install the qemu-kvm Guest Additions.
 apt-get install -y qemu-guest-agent spice-vdagent
