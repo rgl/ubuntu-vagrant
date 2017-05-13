@@ -1,5 +1,8 @@
 VERSION=$(shell jq -r .variables.version ubuntu.json)
 
+help:
+	@echo type make build-libvirt or make build-virtualbox
+
 build-libvirt: ubuntu-${VERSION}-amd64-libvirt.box
 
 build-virtualbox: ubuntu-${VERSION}-amd64-virtualbox.box
