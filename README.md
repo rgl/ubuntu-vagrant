@@ -6,6 +6,25 @@ Currently this targets [Ubuntu 16.04](https://help.ubuntu.com/16.04/installation
 
 Install [Packer](https://www.packer.io/), [Vagrant](https://www.vagrantup.com/) and [jq](https://stedolan.github.io/jq/).
 
+If you are on a Ubuntu host, you should also install and configure the NFS server. E.g.:
+
+```bash
+# install the nfs server.
+sudo apt-get install -y nfs-kernel-server
+
+# enable password-less configuration of the nfs server exports.
+sudo bash -c 'cat >/etc/sudoers.d/vagrant-synced-folders' <<'EOF'
+Cmnd_Alias VAGRANT_EXPORTS_CHOWN = /bin/chown 0\:0 /tmp/*
+Cmnd_Alias VAGRANT_EXPORTS_MV = /bin/mv -f /tmp/* /etc/exports
+Cmnd_Alias VAGRANT_NFSD_CHECK = /etc/init.d/nfs-kernel-server status
+Cmnd_Alias VAGRANT_NFSD_START = /etc/init.d/nfs-kernel-server start
+Cmnd_Alias VAGRANT_NFSD_APPLY = /usr/sbin/exportfs -ar
+%sudo ALL=(root) NOPASSWD: VAGRANT_EXPORTS_CHOWN, VAGRANT_EXPORTS_MV, VAGRANT_NFSD_CHECK, VAGRANT_NFSD_START, VAGRANT_NFSD_APPLY
+EOF
+```
+
+For more information see the [Vagrant NFS documentation](https://www.vagrantup.com/docs/synced-folders/nfs.html).
+
 ## qemu-kvm usage
 
 Install qemu-kvm:

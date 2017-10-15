@@ -45,7 +45,10 @@ else
 apt-get install -y qemu-guest-agent spice-vdagent
 fi
 
-# install rsync to support "rsync shared" folders in vagrant.
+# install the nfs client to support nfs synced folders in vagrant.
+apt-get install -y nfs-common
+
+# install rsync to support rsync synced folders in vagrant.
 apt-get install -y rsync
 
 # disable the DNS reverse lookup on the SSH server. this stops it from
