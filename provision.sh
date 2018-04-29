@@ -74,4 +74,11 @@ apt-get -y autoremove
 apt-get -y clean
 
 # zero the free disk space -- for better compression of the box file.
-dd if=/dev/zero of=/EMPTY bs=1M || true ; rm -f /EMPTY
+# NB prefer discard/trim (safer; faster) over creating a big zero filled file
+#    (somewhat unsafe as it has to fill the entire disk, which might trigger
+#    a disk (near) full alarm; slower; slightly better compression).
+if [ "$(lsblk -no DISC-GRAN $(findmnt -no SOURCE /) | awk '{print $1}')" != '0B' ]; then
+    fstrim -v /
+else
+    dd if=/dev/zero of=/EMPTY bs=1M || true; rm -f /EMPTY
+fi
