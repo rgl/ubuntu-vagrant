@@ -19,6 +19,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision 'shell', inline: 'cat /etc/os-release'
+  config.vm.provision 'shell', inline: 'echo "machine-id is $(cat /etc/machine-id)"'
   config.vm.provision 'shell', inline: 'lsblk -x KNAME -o KNAME,SIZE,TRAN,SUBSYSTEMS,FSTYPE,UUID,LABEL,MODEL,SERIAL'
   config.vm.provision 'shell', inline: 'df -h'
   config.vm.provision 'shell', inline: "dpkg-query -W -f='${binary:Package}\\n' | sort >/vagrant/#{config.vm.box}-packages.txt"
