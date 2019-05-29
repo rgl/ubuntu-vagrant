@@ -40,9 +40,14 @@ rm -rf /tmp/VBoxGuestAdditions
 umount /mnt
 eject /dev/sr1
 modinfo vboxguest
-else
+elif [ -n "$(lspci | grep 'Red Hat' | head -1)" ]; then
 # install the qemu-kvm Guest Additions.
 apt-get install -y qemu-guest-agent spice-vdagent
+elif [ -n "$(lspci | grep VMware | head -1)" ]; then
+# install the VMware Guest Additions.
+true # NB open-vm-tools is (and must be) installed from preseed.txt.
+else
+echo 'ERROR: Unknown VM host.' || exit 1
 fi
 
 # install the nfs client to support nfs synced folders in vagrant.

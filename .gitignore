@@ -1,5 +1,6 @@
 .vagrant/
 packer_cache/
+tmp/
 *.box
 *.log
 output*

@@ -1,0 +1,72 @@
+{
+  "variables": {
+    "disk_size": "8192",
+    "version": "18.04",
+    "vsphere_iso_url": "[Datastore] iso/ubuntu-18.04-amd64-netboot-mini.iso",
+    "vsphere_host": "vsphere.local",
+    "vsphere_username": "administrator@vsphere.local",
+    "vsphere_password": "password",
+    "vsphere_esxi_host": "esxi.local",
+    "vsphere_datacenter": "Datacenter",
+    "vsphere_cluster": "Cluster",
+    "vsphere_datastore": "Datastore",
+    "vsphere_folder": "test",
+    "vsphere_network": "packer"
+  },
+  "builders": [
+    {
+      "name": "ubuntu-{{user `version`}}-amd64-vsphere",
+      "vm_name": "ubuntu-{{user `version`}}-amd64-vsphere",
+      "http_directory": ".",
+      "type": "vsphere-iso",
+      "guest_os_type": "ubuntu64Guest",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_thin_provisioned": true,
+      "disk_controller_type": "pvscsi",
+      "vcenter_server": "{{user `vsphere_host`}}",
+      "username": "{{user `vsphere_username`}}",
+      "password": "{{user `vsphere_password`}}",
+      "insecure_connection": "true",
+      "datacenter": "{{user `vsphere_datacenter`}}",
+      "cluster": "{{user `vsphere_cluster`}}",
+      "host": "{{user `vsphere_esxi_host`}}",
+      "folder": "{{user `vsphere_folder`}}",
+      "datastore": "{{user `vsphere_datastore`}}",
+      "network_card": "vmxnet3",
+      "network": "{{user `vsphere_network`}}",
+      "convert_to_template": true,
+      "RAM": 2048,
+      "CPUs": 4,
+      "iso_paths": [
+        "{{user `vsphere_iso_url`}}"
+      ],
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<tab>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "linux initrd=initrd.gz",
+        " auto=true",
+        " url={{.HTTPIP}}:{{.HTTPPort}}/tmp/preseed-vsphere.txt",
+        " hostname=vagrant",
+        " net.ifnames=0",
+        " DEBCONF_DEBUG=5",
+        "<enter>"
+      ],
+      "shutdown_command": "echo vagrant | sudo -S poweroff"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo vagrant | sudo -S bash {{.Path}}",
+      "scripts": ["provision.sh"]
+    }
+  ]
+}
