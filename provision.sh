@@ -50,6 +50,9 @@ else
 echo 'ERROR: Unknown VM host.' || exit 1
 fi
 
+# install cloud-init.
+apt-get install -y --no-install-recommends cloud-init cloud-initramfs-growroot
+
 # install the nfs client to support nfs synced folders in vagrant.
 apt-get install -y nfs-common
 
