@@ -92,7 +92,8 @@
         " DEBCONF_DEBUG=5",
         "<enter>"
       ],
-      "shutdown_command": "echo vagrant | sudo -S poweroff"
+      "shutdown_command": "echo vagrant | sudo -S poweroff",
+      "post_shutdown_delay": "2m"
     }
   ],
   "provisioners": [
