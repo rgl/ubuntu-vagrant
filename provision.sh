@@ -4,13 +4,9 @@ set -eu
 # echo all the executed commands.
 set -x
 
-# let our user use root permissions without sudo asking for a password (because
-# d-i adds us into the sudo group, but we must be on the admin group instead).
-# alternatively: echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/vagrant
-groupadd -r admin
-usermod -a -G admin vagrant
-gpasswd -d vagrant sudo
-sed -i -e 's,%admin ALL=(ALL) ALL,%admin ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
+# let the sudo group members use root permissions without a password.
+# NB d-i automatically adds vagrant into the sudo group.
+sed -i -E 's,^%sudo\s+.+,%sudo ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
 
 # install the vagrant public key.
 # NB vagrant will replace it on the first run.
