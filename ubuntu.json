@@ -1,9 +1,9 @@
 {
   "variables": {
     "disk_size": "61440",
-    "version": "18.04",
-    "iso_url": "http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso",
-    "iso_checksum": "bed8a55ae2a657f8349fe3271097cff3a5b8c3d1048cf258568f1601976fa30d",
+    "version": "19.10",
+    "iso_url": "http://archive.ubuntu.com/ubuntu/dists/eoan/main/installer-amd64/current/images/netboot/mini.iso",
+    "iso_checksum": "03d3ec50bce69eb13a406ac2cf8a4c3cb2b2e1fa58d257ea4f366469cbf091eb",
     "iso_checksum_type": "sha256"
   },
   "builders": [
