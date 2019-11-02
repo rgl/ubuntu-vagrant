@@ -78,8 +78,8 @@ rm -f /var/lib/dbus/machine-id
 # reset the random-seed.
 # NB systemd-random-seed re-generates it on every boot and shutdown.
 # NB you can prove that random-seed file does not exist on the image with:
-#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-18.04-amd64/0/libvirt/box.img
-#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-18.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt
+#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img
+#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt
 #       sudo ls -laF /mnt/var/lib/systemd
 #       sudo guestunmount /mnt
 #       sudo bash -c 'while kill -0 $(cat guestmount.pid) 2>/dev/null; do sleep .1; done; rm guestmount.pid' # wait for guestmount to finish.

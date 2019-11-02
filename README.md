@@ -1,6 +1,6 @@
 This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso To Vagrant Box](http://blog.ruilopes.com/from-iso-to-vagrant-box.html) article.
 
-Currently this targets [Ubuntu 18.04](https://help.ubuntu.com/18.04/installation-guide/amd64/index.html).
+Currently this targets [Ubuntu 20.04 (Focal Fossa)](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes).
 
 # Usage
 
@@ -111,7 +111,7 @@ export GOVC_CLUSTER='Cluster'
 export GOVC_DATASTORE='Datastore'
 export VSPHERE_ESXI_HOST='esxi.local'
 export VSPHERE_TEMPLATE_FOLDER='test/templates'
-export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-18.04-amd64-vsphere"
+export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-20.04-amd64-vsphere"
 export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'

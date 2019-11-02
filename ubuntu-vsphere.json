@@ -1,8 +1,8 @@
 {
   "variables": {
     "disk_size": "8192",
-    "version": "18.04",
-    "vsphere_iso_url": "[{{env `GOVC_DATASTORE`}}] iso/ubuntu-18.04-amd64-netboot-mini.iso",
+    "version": "20.04",
+    "vsphere_iso_url": "[{{env `GOVC_DATASTORE`}}] iso/ubuntu-20.04-amd64-netboot-mini.iso",
     "vsphere_host": "{{env `GOVC_HOST`}}",
     "vsphere_username": "{{env `GOVC_USERNAME`}}",
     "vsphere_password": "{{env `GOVC_PASSWORD`}}",
