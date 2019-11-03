@@ -64,3 +64,53 @@ vagrant ssh
 exit
 vagrant destroy -f
 ```
+
+## VMware vSphere usage
+
+Download `packer-builder-vsphere-iso` v2.3 from the [jetbrains-infra/packer-builder-vsphere releases page](https://github.com/jetbrains-infra/packer-builder-vsphere/releases) and place it inside your `~/.packer.d/plugins` directory.
+
+Download [govc](https://github.com/vmware/govmomi/releases/latest) and place it inside your `/usr/local/bin` directory.
+
+Install the vsphere vagrant plugin, set your vSphere details, and test the connection to vSphere:
+
+```bash
+sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev
+vagrant plugin install vagrant-vsphere
+cd example
+cat >secrets.sh <<EOF
+export GOVC_INSECURE='1'
+export GOVC_HOST='vsphere.local'
+export GOVC_URL="https://$GOVC_HOST/sdk"
+export GOVC_USERNAME='administrator@vsphere.local'
+export GOVC_PASSWORD='password'
+export GOVC_DATACENTER='Datacenter'
+export GOVC_CLUSTER='Cluster'
+export GOVC_DATASTORE='Datastore'
+export VSPHERE_ESXI_HOST='esxi.local'
+export VSPHERE_TEMPLATE_FOLDER='test/templates'
+export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-18.04-amd64-vsphere"
+export VSPHERE_VM_FOLDER='test'
+export VSPHERE_VM_NAME='ubuntu-vagrant-example'
+export VSPHERE_VLAN='packer'
+EOF
+source secrets.sh
+# see https://github.com/vmware/govmomi/blob/master/govc/USAGE.md
+govc version
+govc about
+govc datacenter.info # list datacenters
+govc find # find all managed objects
+```
+
+Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.json](ubuntu.json) file) and place it inside the datastore as defined by the `vsphere_iso_url` user variable that is inside the [packer template](ubuntu-vsphere.json).
+
+Type `make build-vsphere` and follow the instructions.
+
+Try the example guest:
+
+```bash
+source secrets.sh
+vagrant up --provider=vsphere
+vagrant ssh
+exit
+vagrant destroy -f
+```
