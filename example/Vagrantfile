@@ -1,3 +1,15 @@
+require 'base64'
+require 'stringio'
+require 'zlib'
+
+def gzip_base64(data)
+  o = StringIO.new() 
+  w = Zlib::GzipWriter.new(o)
+  w.write(data)
+  w.close()
+  Base64.strict_encode64(o.string)
+end
+
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu-18.04-amd64'
 
@@ -34,6 +46,42 @@ Vagrant.configure(2) do |config|
     vsphere.template_name = ENV['VSPHERE_TEMPLATE_NAME']
     vsphere.vm_base_path = ENV['VSPHERE_VM_FOLDER']
     vsphere.vlan = ENV['VSPHERE_VLAN']
+    # NB the extra_config data ends-up inside the VM .vmx file.
+    # NB the guestinfo properties will be exposed by cloud-init-vmware-guestinfo
+    #    as a cloud-init datasource.
+    # NB the runcmd output is written to journald and /var/log/cloud-init-output.log.
+    # See https://github.com/vmware/cloud-init-vmware-guestinfo
+    vsphere.extra_config = {
+      'guestinfo.userdata' => gzip_base64(
+        <<~DATA
+        #cloud-config
+        runcmd:
+          - echo '************** DONE RUNNING CLOUD-INIT **************'
+        DATA
+      ),
+      'guestinfo.userdata.encoding' => 'gzip+base64',
+      # Uncomment the following to set a static IP address.
+      # 'guestinfo.metadata' => gzip_base64(
+      #   {
+      #     'network' => gzip_base64(
+      #       <<~DATA
+      #       version: 2
+      #       ethernets:
+      #         eth0:
+      #           dhcp4: false
+      #           addresses:
+      #             - 10.0.0.123/24
+      #           gateway4: 10.0.0.1
+      #           nameservers:
+      #             addresses:
+      #               - 10.0.0.1
+      #       DATA
+      #     ),
+      #     'network.encoding': 'gzip+base64',
+      #   }.to_json
+      # ),
+      # 'guestinfo.metadata.encoding' => 'gzip+base64',
+    }
   end
 
   config.vm.provision 'shell', inline: 'cat /etc/os-release'

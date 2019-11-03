@@ -103,6 +103,8 @@ govc find # find all managed objects
 
 Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.json](ubuntu.json) file) and place it inside the datastore as defined by the `vsphere_iso_url` user variable that is inside the [packer template](ubuntu-vsphere.json).
 
+See the [example Vagrantfile](example/Vagrantfile) to see how you could use a cloud-init configuration to configure the VM.
+
 Type `make build-vsphere` and follow the instructions.
 
 Try the example guest:
