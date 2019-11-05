@@ -68,8 +68,12 @@
   "provisioners": [
     {
       "type": "shell",
+      "expect_disconnect": true,
       "execute_command": "echo vagrant | sudo -S bash {{.Path}}",
-      "scripts": ["provision.sh"]
+      "scripts": [
+        "provision-guest-additions.sh",
+        "provision.sh"
+      ]
     }
   ]
 }
