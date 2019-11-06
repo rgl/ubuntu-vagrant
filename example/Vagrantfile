@@ -28,6 +28,7 @@ def create_cloud_init_iso(config, group, cloud_init_user_data, cloud_init_networ
         File.write('tmp/cidata/meta-data', '{}')
         File.write('tmp/cidata/user-data', "#cloud-config\n#{cloud_init_user_data.to_json}")
         File.write('tmp/cidata/network-config', cloud_init_network_config.to_json)
+        env.ui.info 'Creating the cloud-init cidata.iso file...'
         raise 'Failed to execute genisoimage to create the cloud-init cidata.iso file' unless system(
           'genisoimage',
             "-output=#{cloud_init_data_path}",
@@ -35,6 +36,7 @@ def create_cloud_init_iso(config, group, cloud_init_user_data, cloud_init_networ
             '-joliet',
             '-rock',
             'tmp/cidata')
+        env.ui.info 'The cloud-init cidata.iso file was created as:'
         system('isoinfo', '-d', '-i', cloud_init_data_path)
       end
     end
