@@ -16,7 +16,7 @@ end
 # NB libvirtd libvirt-qemu:kvm MUST have read permissions to the iso file path.
 # see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 def create_cloud_init_iso(config, group, cloud_init_user_data, cloud_init_network_config)
-  cloud_init_data_path = "/tmp/cidata/#{Digest::SHA1.hexdigest(__FILE__)}.iso"
+  cloud_init_data_path = "/tmp/cidata/cidata-#{Digest::SHA1.hexdigest(__FILE__)}.iso"
   config.trigger.before :up do |trigger|
     trigger.ruby do |env, machine|
       if !File.exists?(cloud_init_data_path) || File.mtime(cloud_init_data_path) < File.mtime(__FILE__)
@@ -83,10 +83,17 @@ Vagrant.configure(2) do |config|
     config.vm.synced_folder '.', '/vagrant', type: 'nfs'
   end
 
-  config.vm.provider 'virtualbox' do |vb|
+  config.vm.provider 'virtualbox' do |vb, config|
     vb.linked_clone = true
     vb.memory = 2048
     vb.cpus = 2
+    vb.customize [
+      'storageattach', :id,
+      '--storagectl', 'SATA Controller',
+      '--device', 0,
+      '--port', 1,
+      '--type', 'dvddrive',
+      '--medium', create_cloud_init_iso(config, nil, cloud_init_user_data, cloud_init_network_config)]
   end
 
   config.vm.provider 'vsphere' do |vsphere, override|
