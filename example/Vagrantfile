@@ -16,7 +16,7 @@ end
 # NB libvirtd libvirt-qemu:kvm MUST have read permissions to the iso file path.
 # see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 def create_cloud_init_iso(config, group, cloud_init_user_data, cloud_init_network_config)
-  cloud_init_data_path = "/tmp/cidata/cidata-#{Digest::SHA1.hexdigest(__FILE__)}.iso"
+  cloud_init_data_path = "#{ENV['TMP'] || '/tmp'}/cidata/cidata-#{Digest::SHA1.hexdigest(__FILE__)}.iso"
   config.trigger.before :up do |trigger|
     trigger.ruby do |env, machine|
       if !File.exists?(cloud_init_data_path) || File.mtime(cloud_init_data_path) < File.mtime(__FILE__)
@@ -29,15 +29,16 @@ def create_cloud_init_iso(config, group, cloud_init_user_data, cloud_init_networ
         File.write('tmp/cidata/user-data', "#cloud-config\n#{cloud_init_user_data.to_json}")
         File.write('tmp/cidata/network-config', cloud_init_network_config.to_json)
         env.ui.info 'Creating the cloud-init cidata.iso file...'
-        raise 'Failed to execute genisoimage to create the cloud-init cidata.iso file' unless system(
-          'genisoimage',
-            "-output=#{cloud_init_data_path}",
-            '-volid=cidata',
+        raise 'Failed to execute xorriso to create the cloud-init cidata.iso file' unless system(
+          'xorriso',
+            '-as', 'genisoimage',
+            '-output', cloud_init_data_path,
+            '-volid', 'cidata',
             '-joliet',
             '-rock',
             'tmp/cidata')
         env.ui.info 'The cloud-init cidata.iso file was created as:'
-        system('isoinfo', '-d', '-i', cloud_init_data_path)
+        system('iso-info', '--no-header', '-i', cloud_init_data_path)
       end
     end
   end
