@@ -4,9 +4,13 @@ Currently this targets [Ubuntu 18.04](https://help.ubuntu.com/18.04/installation
 
 # Usage
 
-Install [Packer](https://www.packer.io/), [Vagrant](https://www.vagrantup.com/) and [jq](https://stedolan.github.io/jq/).
+## Ubuntu Host
 
-If you are on a Ubuntu host, you should also install and configure the NFS server. E.g.:
+On a Ubuntu host, install the dependencies by running the file at:
+
+    https://github.com/rgl/xfce-desktop-vagrant/blob/master/provision-virtualization-tools.sh
+
+And you should also install and configure the NFS server. E.g.:
 
 ```bash
 # install the nfs server.
@@ -24,6 +28,27 @@ EOF
 ```
 
 For more information see the [Vagrant NFS documentation](https://www.vagrantup.com/docs/synced-folders/nfs.html).
+
+## Windows Host
+
+On a Windows host, install [Chocolatey](https://chocolatey.org/install), then execute the following PowerShell commands in a Administrator PowerShell window:
+
+```powershell
+choco install -y virtualbox --params "/NoDesktopShortcut /ExtensionPack"
+choco install -y packer vagrant jq msys2
+```
+
+Then open a bash shell by starting `C:\tools\msys64\mingw64.exe` and install the remaining dependencies:
+
+```bash
+pacman --noconfirm -Sy make zip unzip tar dos2unix netcat procps xorriso mingw-w64-x86_64-libcdio
+for n in /*.ini; do
+    sed -i -E 's,^#?(MSYS2_PATH_TYPE)=.+,\1=inherit,g' $n
+done
+exit
+```
+
+**NB** The commands described in this README should be executed in a mingw64 bash shell.
 
 ## qemu-kvm usage
 
