@@ -85,7 +85,7 @@ cloud_init_user_data = {
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu-18.04-amd64'
 
-  config.vm.hostname = 'example'
+  config.vm.hostname = 'example.test'
 
   # use the credentials defined in cloud_init_user_data.
   config.ssh.username = $provision_username
