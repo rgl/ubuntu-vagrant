@@ -94,7 +94,7 @@ vagrant destroy -f
 
 Download [govc](https://github.com/vmware/govmomi/releases/latest) and place it inside your `/usr/local/bin` directory.
 
-Install the vsphere vagrant plugin, set your vSphere details, and test the connection to vSphere:
+Install the [vsphere vagrant plugin](https://github.com/nsidc/vagrant-vsphere), set your vSphere details, and test the connection to vSphere:
 
 ```bash
 sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev
