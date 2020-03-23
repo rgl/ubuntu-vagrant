@@ -23,21 +23,21 @@ ubuntu-${VERSION}-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.json Vag
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 ubuntu-${VERSION}-amd64-virtualbox.box
 
-ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu-vsphere.json Vagrantfile.template dummy-vsphere.box
+ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu-vsphere.json Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log \
 		packer build -only=ubuntu-${VERSION}-amd64-vsphere ubuntu-vsphere.json
+	rm -rf tmp/$@-contents
+	mkdir -p tmp/$@-contents
+	echo '{"provider":"vsphere"}' >tmp/$@-contents/metadata.json
+	cp Vagrantfile.template tmp/$@-contents/Vagrantfile
+	tar cvf $@ -C tmp/$@-contents .
 	@echo BOX successfully built!
 	@echo to add to local vagrant install do:
-	@echo vagrant box add -f dummy dummy-vsphere.box
+	@echo vagrant box add -f ubuntu-${VERSION}-amd64 ubuntu-${VERSION}-amd64-vsphere.box
 
 tmp/preseed-vsphere.txt: preseed.txt
 	mkdir -p tmp
 	sed -E 's,(d-i pkgsel/include string .+),\1 open-vm-tools,g' preseed.txt >$@
-
-dummy-vsphere.box:
-	echo '{"provider":"vsphere"}' >metadata.json
-	tar cvf $@ metadata.json
-	rm metadata.json
 
 .PHONY: help buid-libvirt build-virtualbox build-vsphere
