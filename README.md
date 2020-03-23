@@ -92,8 +92,6 @@ vagrant destroy -f
 
 ## VMware vSphere usage
 
-Download `packer-builder-vsphere-iso` v2.3 from the [jetbrains-infra/packer-builder-vsphere releases page](https://github.com/jetbrains-infra/packer-builder-vsphere/releases) and place it inside your `~/.packer.d/plugins` directory.
-
 Download [govc](https://github.com/vmware/govmomi/releases/latest) and place it inside your `/usr/local/bin` directory.
 
 Install the vsphere vagrant plugin, set your vSphere details, and test the connection to vSphere:
