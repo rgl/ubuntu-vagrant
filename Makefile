@@ -10,7 +10,7 @@ build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 ubuntu-${VERSION}-amd64-libvirt.box: preseed.txt provision.sh ubuntu.json Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log \
-		packer build -only=ubuntu-${VERSION}-amd64-libvirt -on-error=abort ubuntu.json
+		packer build -only=ubuntu-${VERSION}-amd64-libvirt -on-error=abort -timestamp-ui ubuntu.json
 	@echo BOX successfully built!
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 ubuntu-${VERSION}-amd64-libvirt.box
@@ -18,7 +18,7 @@ ubuntu-${VERSION}-amd64-libvirt.box: preseed.txt provision.sh ubuntu.json Vagran
 ubuntu-${VERSION}-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.json Vagrantfile.template
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log \
-		packer build -only=ubuntu-${VERSION}-amd64-virtualbox -on-error=abort ubuntu.json
+		packer build -only=ubuntu-${VERSION}-amd64-virtualbox -on-error=abort -timestamp-ui ubuntu.json
 	@echo BOX successfully built!
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 ubuntu-${VERSION}-amd64-virtualbox.box
@@ -26,7 +26,7 @@ ubuntu-${VERSION}-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.json Vag
 ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu-vsphere.json Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log \
-		packer build -only=ubuntu-${VERSION}-amd64-vsphere ubuntu-vsphere.json
+		packer build -only=ubuntu-${VERSION}-amd64-vsphere -timestamp-ui ubuntu-vsphere.json
 	rm -rf tmp/$@-contents
 	mkdir -p tmp/$@-contents
 	echo '{"provider":"vsphere"}' >tmp/$@-contents/metadata.json
