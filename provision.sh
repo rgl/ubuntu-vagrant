@@ -4,6 +4,9 @@ set -eu
 # echo all the executed commands.
 set -x
 
+# remove the boot/shutdown splash.
+apt-get remove --purge -y plymouth
+
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically adds vagrant into the sudo group.
 sed -i -E 's,^%sudo\s+.+,%sudo ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
