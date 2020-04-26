@@ -3,7 +3,9 @@
     "disk_size": "61440",
     "version": "20.04",
     "iso_url": "http://archive.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/current/legacy-images/netboot/mini.iso",
-    "iso_checksum": "sha256:0e79e00bf844929d40825b1f0e8634415cda195ba23bae0b041911fde4dfe018"
+    "iso_checksum": "sha256:0e79e00bf844929d40825b1f0e8634415cda195ba23bae0b041911fde4dfe018",
+    "hyperv_switch_name": "{{env `HYPERV_SWITCH_NAME`}}",
+    "hyperv_vlan_id": "{{env `HYPERV_VLAN_ID`}}"
   },
   "builders": [
     {
@@ -92,6 +94,40 @@
       ],
       "shutdown_command": "echo vagrant | sudo -S poweroff",
       "post_shutdown_delay": "2m"
+    },
+    {
+      "name": "ubuntu-{{user `version`}}-amd64-hyperv",
+      "type": "hyperv-iso",
+      "temp_path": "tmp",
+      "headless": true,
+      "http_directory": ".",
+      "generation": 2,
+      "cpus": 2,
+      "memory": 2048,
+      "switch_name": "{{user `hyperv_switch_name`}}",
+      "vlan_id": "{{user `hyperv_vlan_id`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_timeout": "60m",
+      "first_boot_device": "DVD",
+      "boot_order": ["SCSI:0:0"],
+      "boot_wait": "5s",
+      "boot_command": [
+        "<esc>",
+        "linux /linux",
+        " auto=true",
+        " url={{.HTTPIP}}:{{.HTTPPort}}/tmp/preseed-hyperv.txt",
+        " hostname=vagrant",
+        " net.ifnames=0",
+        " DEBCONF_DEBUG=5",
+        "<enter>",
+        "initrd /initrd.gz<enter>",
+        "boot<enter>"
+      ],
+      "shutdown_command": "echo vagrant | sudo -S poweroff"
     }
   ],
   "provisioners": [
@@ -102,6 +138,19 @@
       "scripts": [
         "provision-guest-additions.sh",
         "provision.sh"
+      ]
+    },
+    {
+      "type": "shell-local",
+      "environment_vars": [
+        "PACKER_VERSION={{packer_version}}",
+        "PACKER_VM_NAME={{build `ID`}}"
+      ],
+      "scripts": [
+        "provision-local-hyperv.cmd"
+      ],
+      "only": [
+        "ubuntu-{{user `version`}}-amd64-hyperv"
       ]
     }
   ],

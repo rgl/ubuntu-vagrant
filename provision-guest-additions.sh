@@ -28,6 +28,10 @@ elif [ -n "$(lspci | grep VMware | head -1)" ]; then
 # no need to install the VMware Guest Additions as they were
 # already installed from tmp/preseed-vsphere.txt.
 exit 0
+elif [ "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" == 'Microsoft Corporation' ]; then
+# no need to install the Hyper-V Guest Additions (aka Linux Integration Services)
+# as they were already installed from tmp/preseed-hyperv.txt.
+exit 0
 else
 echo 'ERROR: Unknown VM host.'
 exit 1

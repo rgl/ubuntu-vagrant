@@ -36,6 +36,9 @@ fi
 # install the nfs client to support nfs synced folders in vagrant.
 apt-get install -y nfs-common
 
+# install the smb client to support cifs/smb/samba synced folders in vagrant.
+apt-get install -y --no-install-recommends cifs-utils
+
 # install rsync to support rsync synced folders in vagrant.
 apt-get install -y rsync
 
@@ -92,7 +95,7 @@ systemctl stop systemd-random-seed
 rm -f /var/lib/systemd/random-seed
 
 # clean packages.
-apt-get -y autoremove
+apt-get -y autoremove --purge
 apt-get -y clean
 
 # zero the free disk space -- for better compression of the box file.
@@ -100,7 +103,14 @@ apt-get -y clean
 #    (somewhat unsafe as it has to fill the entire disk, which might trigger
 #    a disk (near) full alarm; slower; slightly better compression).
 if [ "$(lsblk -no DISC-GRAN $(findmnt -no SOURCE /) | awk '{print $1}')" != '0B' ]; then
-    fstrim -v /
+    while true; do
+        output="$(fstrim -v /)"
+        cat <<<"$output"
+        sync && sync && sleep 15
+        if [ "$output" == '/: 0 B (0 bytes) trimmed' ]; then
+            break
+        fi
+    done
 else
     dd if=/dev/zero of=/EMPTY bs=1M || true; rm -f /EMPTY
 fi
