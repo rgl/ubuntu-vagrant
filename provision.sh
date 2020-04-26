@@ -4,9 +4,6 @@ set -eu
 # echo all the executed commands.
 set -x
 
-# remove the boot/shutdown splash.
-apt-get remove --purge -y plymouth
-
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically adds vagrant into the sudo group.
 sed -i -E 's,^%sudo\s+.+,%sudo ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
@@ -47,8 +44,17 @@ apt-get install -y rsync
 # is kinda slow and does not normally work when running inside VB.
 echo UseDNS no >> /etc/ssh/sshd_config
 
+# remove the boot/shutdown splash.
+apt-get remove --purge -y plymouth
+
+# show boot messages.
+# NB the default is "quiet splash".
+sed -i -E 's,^(GRUB_CMDLINE_LINUX_DEFAULT\s*=).*,\1"",g' /etc/default/grub
+
 # disable the graphical terminal. its kinda slow and useless on a VM.
 sed -i -E 's,#(GRUB_TERMINAL\s*=).*,\1console,g' /etc/default/grub
+
+# apply the grub configuration.
 update-grub
 
 # use the up/down arrows to navigate the bash history.
