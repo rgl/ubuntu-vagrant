@@ -25,10 +25,12 @@ elif [ -n "$(lspci | grep 'Red Hat' | head -1)" ]; then
 # install the qemu-kvm Guest Additions.
 apt-get install -y qemu-guest-agent spice-vdagent
 elif [ -n "$(lspci | grep VMware | head -1)" ]; then
-# install the VMware Guest Additions.
-true # NB open-vm-tools is (and must be) installed from preseed.txt.
+# no need to install the VMware Guest Additions as they were
+# already installed from tmp/preseed-vsphere.txt.
+exit 0
 else
-echo 'ERROR: Unknown VM host.' || exit 1
+echo 'ERROR: Unknown VM host.'
+exit 1
 fi
 
 # reboot.
