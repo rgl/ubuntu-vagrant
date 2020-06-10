@@ -68,7 +68,7 @@ Try the example guest:
 cd example
 apt-get install -y virt-manager libvirt-dev
 vagrant plugin install vagrant-libvirt
-vagrant up --provider=libvirt
+vagrant up --provider=libvirt --no-destroy-on-error
 vagrant ssh
 exit
 vagrant destroy -f
