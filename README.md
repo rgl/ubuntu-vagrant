@@ -84,7 +84,7 @@ Try the example guest:
 
 ```bash
 cd example
-vagrant up --provider=virtualbox
+vagrant up --provider=virtualbox --no-destroy-on-error
 vagrant ssh
 exit
 vagrant destroy -f
@@ -134,7 +134,7 @@ Try the example guest:
 
 ```bash
 source secrets.sh
-vagrant up --provider=vsphere
+vagrant up --provider=vsphere --no-destroy-on-error
 vagrant ssh
 exit
 vagrant destroy -f
