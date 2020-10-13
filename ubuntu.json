@@ -133,7 +133,7 @@
     {
       "type": "shell",
       "expect_disconnect": true,
-      "execute_command": "echo vagrant | sudo -S bash {{.Path}}",
+      "execute_command": "echo vagrant | sudo -S {{.Vars}} bash {{.Path}}",
       "scripts": [
         "provision-guest-additions.sh",
         "provision.sh"
