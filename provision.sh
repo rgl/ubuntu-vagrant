@@ -17,7 +17,7 @@ chmod 600 authorized_keys
 chown -R vagrant:vagrant .
 
 # install cloud-init.
-apt-get install -y --no-install-recommends cloud-init cloud-initramfs-growroot
+apt-get install -y --no-install-recommends cloud-init
 if [ -n "$(lspci | grep VMware | head -1)" ]; then
 # add support for the vmware vmx guestinfo cloud-init datasource.
 # NB there is plans to include this datasource in the upstream cloud-init project at
@@ -82,9 +82,11 @@ rm -f /var/lib/dbus/machine-id
 # NB systemd-random-seed re-generates it on every boot and shutdown.
 # NB you can prove that random-seed file does not exist on the image with:
 #       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img
-#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt
+#       sudo mkdir /mnt/ubuntu-20.04-amd64
+#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt/ubuntu-20.04-amd64
+#       sudo bash -c 'unmkinitramfs /mnt/ubuntu-20.04-amd64/boot/initrd.img /tmp/ubuntu-20.04-amd64-initrd' # NB prefer unmkinitramfs over cpio.
 #       sudo ls -laF /mnt/var/lib/systemd
-#       sudo guestunmount /mnt
+#       sudo guestunmount /mnt/ubuntu-20.04-amd64
 #       sudo bash -c 'while kill -0 $(cat guestmount.pid) 2>/dev/null; do sleep .1; done; rm guestmount.pid' # wait for guestmount to finish.
 # see https://www.freedesktop.org/software/systemd/man/systemd-random-seed.service.html
 # see https://manpages.ubuntu.com/manpages/bionic/man4/random.4.html
