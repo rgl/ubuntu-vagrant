@@ -1,7 +1,7 @@
 SHELL=bash
 .SHELLFLAGS=-euo pipefail -c
 
-VERSION=20.04
+VERSION=20.10
 
 help:
 	@echo type make build-libvirt, make build-uefi-libvirt, make build-virtualbox, make build-hyperv or make build-vsphere
@@ -12,7 +12,7 @@ build-virtualbox: ubuntu-${VERSION}-amd64-virtualbox.box
 build-hyperv: ubuntu-${VERSION}-amd64-hyperv.box
 build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
-ubuntu-${VERSION}-amd64-libvirt.box: preseed.txt provision.sh ubuntu.pkr.hcl Vagrantfile.template
+ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
@@ -20,7 +20,7 @@ ubuntu-${VERSION}-amd64-libvirt.box: preseed.txt provision.sh ubuntu.pkr.hcl Vag
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
-ubuntu-${VERSION}-uefi-amd64-libvirt.box: preseed.txt provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
+ubuntu-${VERSION}-uefi-amd64-libvirt.box: tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
@@ -28,7 +28,11 @@ ubuntu-${VERSION}-uefi-amd64-libvirt.box: preseed.txt provision.sh ubuntu.pkr.hc
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-uefi-amd64 $@
 
-ubuntu-${VERSION}-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.pkr.hcl Vagrantfile.template
+tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+	mkdir -p $(shell dirname $@)
+	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< >$@
+
+ubuntu-${VERSION}-amd64-virtualbox.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=virtualbox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
@@ -36,7 +40,7 @@ ubuntu-${VERSION}-amd64-virtualbox.box: preseed.txt provision.sh ubuntu.pkr.hcl 
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
-ubuntu-${VERSION}-amd64-hyperv.box: tmp/preseed-hyperv.txt provision.sh ubuntu.pkr.hcl Vagrantfile.template
+ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=hyperv-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
@@ -45,11 +49,13 @@ ubuntu-${VERSION}-amd64-hyperv.box: tmp/preseed-hyperv.txt provision.sh ubuntu.p
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
 # see https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/supported-ubuntu-virtual-machines-on-hyper-v
-tmp/preseed-hyperv.txt: preseed.txt
-	mkdir -p tmp
-	sed -E 's,(d-i pkgsel/include string .+),\1 linux-image-virtual linux-tools-virtual linux-cloud-tools-virtual,g' preseed.txt >$@
+tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+	mkdir -p $(shell dirname $@)
+	cp -f $< $@
+	sed -i -E 's,\*storage-config-msdos,*storage-config-gpt,g' $@
+	sed -i -E 's,((.+)- openssh-server.*),\1\n\2- linux-image-virtual\n\2- linux-tools-virtual\n\2- linux-cloud-tools-virtual,g' $@
 
-ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile.template
+ubuntu-${VERSION}-amd64-vsphere.box: tmp/vsphere-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
 		packer build -only=vsphere-iso.ubuntu-amd64 -timestamp-ui ubuntu-vsphere.pkr.hcl
@@ -62,8 +68,8 @@ ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
-tmp/preseed-vsphere.txt: preseed.txt
-	mkdir -p tmp
-	sed -E 's,(d-i pkgsel/include string .+),\1 open-vm-tools,g' preseed.txt >$@
+tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+	mkdir -p $(shell dirname $@)
+	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
 
-.PHONY: help buid-libvirt buid-uefi-libvirt build-virtualbox build-vsphere
+.PHONY: help build-libvirt build-uefi-libvirt build-virtualbox build-hyperv build-vsphere

@@ -1,0 +1,104 @@
+#cloud-config
+# see https://ubuntu.com/server/docs/install/autoinstall
+# see https://ubuntu.com/server/docs/install/autoinstall-reference
+# see https://ubuntu.com/server/docs/install/autoinstall-schema
+# see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
+# see https://curtin.readthedocs.io/en/latest/topics/storage.html
+# see https://curtin.readthedocs.io/
+# see /autoinstall.yaml
+# see /var/log/installer/subiquity-debug.log
+# see /var/log/installer/autoinstall-user-data
+# see /var/log/cloud-init.log
+# see /var/log/cloud-init-output.log
+# see /run/cloud-init/instance-data.json
+# see /etc/cloud/cloud.cfg.d/
+# see cloud-init query --all
+snippets:
+  storage-config-msdos: &storage-config-msdos
+    - id: disk-boot
+      type: disk
+      ptable: msdos
+      path: /dev/sda
+      grub_device: true
+    - id: partition-root
+      type: partition
+      device: disk-boot
+      number: 1
+      size: -1
+    - id: format-root
+      type: format
+      volume: partition-root
+      fstype: ext4
+      label: root
+    - id: mount-root
+      type: mount
+      device: format-root
+      path: /
+  storage-config-gpt: &storage-config-gpt
+    - id: disk-boot
+      type: disk
+      ptable: gpt
+      path: /dev/sda
+    - id: partition-esp
+      type: partition
+      device: disk-boot
+      number: 1
+      flag: boot
+      grub_device: true
+      size: 100MB
+    - id: partition-root
+      type: partition
+      device: disk-boot
+      number: 2
+      size: -1
+    - id: format-esp
+      type: format
+      volume: partition-esp
+      fstype: fat32
+      label: esp
+    - id: format-root
+      type: format
+      volume: partition-root
+      fstype: ext4
+      label: root
+    - id: mount-root
+      type: mount
+      device: format-root
+      path: /
+    - id: mount-esp
+      type: mount
+      device: format-esp
+      path: /boot/efi
+autoinstall:
+  version: 1
+  refresh-installer:
+    update: true
+  apt:
+    primary:
+      - arches: [default]
+        uri: http://nl.archive.ubuntu.com/ubuntu
+  early-commands:
+    - systemctl stop ssh # see https://bugs.launchpad.net/subiquity/+bug/1901400
+  late-commands:
+    - curtin in-target -- sed -i -E 's,(GRUB_CMDLINE_LINUX_DEFAULT=).*,\1"net.ifnames=0",g' /etc/default/grub
+    - curtin in-target -- update-grub
+    - |
+      # see https://bugs.launchpad.net/subiquity/+bug/1901397
+      if [ -d /sys/firmware/efi ]; then
+        apt-get install -y efibootmgr
+        efibootmgr -o $(efibootmgr | perl -n -e '/Boot(.+)\* ubuntu/ && print $1')
+      fi
+  identity:
+    hostname: vagrant
+    username: vagrant
+    password: $6$F0PVn0vzBz4clpS/$9xoMqUQsuLvHDttpLUKLHLv./rd3cXnc3YL.JipisgdKn.0HNTYHR.5/f1XM6XGRqFYI1DrB21paiqnU69QWL0
+  keyboard:
+    layout: pt
+  locale: en_US
+  ssh:
+    allow-pw: true
+    install-server: false
+  packages:
+    - openssh-server
+  storage:
+    config: *storage-config-msdos

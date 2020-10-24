@@ -60,27 +60,27 @@ variable "vsphere_ip_wait_address" {
 }
 
 source "vsphere-iso" "ubuntu-amd64" {
-  CPUs = 4
-  RAM  = 2048
+  CPUs     = 4
+  RAM      = 2048
+  cd_label = "cidata"
+  cd_files = [
+    "tmp/vsphere-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data"
+  ]
   boot_command = [
-    "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "linux initrd=initrd.gz",
-    " auto=true",
-    " url={{.HTTPIP}}:{{.HTTPPort}}/tmp/preseed-vsphere.txt",
-    " hostname=vagrant",
+    "e",
+    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+    "linux /casper/vmlinuz",
     " net.ifnames=0",
-    " DEBCONF_DEBUG=5",
+    " autoinstall",
     "<enter>",
+    "initrd /casper/initrd",
+    "<enter>",
+    "<f10>",
   ]
   boot_wait           = "5s"
   convert_to_template = true
-  insecure_connection = "true"
+  insecure_connection = true
   vcenter_server      = var.vsphere_host
   username            = var.vsphere_username
   password            = var.vsphere_password
@@ -94,7 +94,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   http_directory      = "."
   ip_wait_address     = var.vsphere_ip_wait_address
   iso_paths = [
-    "[${var.vsphere_datastore}] iso/ubuntu-${var.version}-amd64-netboot-mini.iso",
+    "[${var.vsphere_datastore}] iso/ubuntu-${var.version}-live-server-amd64.iso",
   ]
   network_adapters {
     network      = var.vsphere_network
@@ -117,6 +117,7 @@ build {
     execute_command   = "echo vagrant | sudo -S bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
+      "upgrade.sh",
       "provision-guest-additions.sh",
       "provision.sh",
     ]

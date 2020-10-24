@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euxo pipefail
 
+# wait for cloud-init to finish.
+cloud-init status --long --wait
+
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically adds vagrant into the sudo group.
 sed -i -E 's,^%sudo\s+.+,%sudo ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
@@ -13,8 +16,7 @@ wget -qOauthorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/mast
 chmod 600 authorized_keys
 chown -R vagrant:vagrant .
 
-# install cloud-init.
-apt-get install -y --no-install-recommends cloud-init
+# add additional cloud-init data sources.
 if [ -n "$(lspci | grep VMware | head -1)" ]; then
 # add support for the vmware vmx guestinfo cloud-init datasource.
 # NB there is plans to include this datasource in the upstream cloud-init project at
@@ -47,10 +49,6 @@ echo UseDNS no >> /etc/ssh/sshd_config
 # remove the boot/shutdown splash.
 apt-get remove --purge -y plymouth
 
-# show boot messages.
-# NB the default is "quiet splash".
-sed -i -E 's,^(GRUB_CMDLINE_LINUX_DEFAULT\s*=).*,\1"",g' /etc/default/grub
-
 # disable the graphical terminal. its kinda slow and useless on a VM.
 sed -i -E 's,#(GRUB_TERMINAL\s*=).*,\1console,g' /etc/default/grub
 
@@ -66,6 +64,11 @@ set show-all-if-ambiguous on
 set completion-ignore-case on
 EOF
 
+# reset cloud-init.
+cloud-init clean --logs --seed
+rm /etc/cloud/cloud.cfg.d/99-installer.cfg
+rm /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
+
 # reset the machine-id.
 # NB systemd will re-generate it on the next boot.
 # NB machine-id is indirectly used in DHCP as Option 61 (Client Identifier), which
@@ -78,12 +81,12 @@ rm -f /var/lib/dbus/machine-id
 # reset the random-seed.
 # NB systemd-random-seed re-generates it on every boot and shutdown.
 # NB you can prove that random-seed file does not exist on the image with:
-#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img
-#       sudo mkdir /mnt/ubuntu-20.04-amd64
-#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-20.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt/ubuntu-20.04-amd64
-#       sudo bash -c 'unmkinitramfs /mnt/ubuntu-20.04-amd64/boot/initrd.img /tmp/ubuntu-20.04-amd64-initrd' # NB prefer unmkinitramfs over cpio.
+#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-20.10-amd64/0/libvirt/box.img
+#       sudo mkdir /mnt/ubuntu-20.10-amd64
+#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-20.10-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt/ubuntu-20.10-amd64
+#       sudo bash -c 'unmkinitramfs /mnt/ubuntu-20.10-amd64/boot/initrd.img /tmp/ubuntu-20.10-amd64-initrd' # NB prefer unmkinitramfs over cpio.
 #       sudo ls -laF /mnt/var/lib/systemd
-#       sudo guestunmount /mnt/ubuntu-20.04-amd64
+#       sudo guestunmount /mnt/ubuntu-20.10-amd64
 #       sudo bash -c 'while kill -0 $(cat guestmount.pid) 2>/dev/null; do sleep .1; done; rm guestmount.pid' # wait for guestmount to finish.
 # see https://www.freedesktop.org/software/systemd/man/systemd-random-seed.service.html
 # see https://manpages.ubuntu.com/manpages/bionic/man4/random.4.html

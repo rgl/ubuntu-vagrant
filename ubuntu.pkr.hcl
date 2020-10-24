@@ -5,12 +5,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "http://archive.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/current/legacy-images/netboot/mini.iso"
+  default = "http://releases.ubuntu.com/groovy/ubuntu-20.10-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:0e79e00bf844929d40825b1f0e8634415cda195ba23bae0b041911fde4dfe018"
+  default = "sha256:defdc1ad3af7b661fe2b4ee861fb6fdb5f52039389ef56da6efc05e6adfe3d45"
 }
 
 variable "hyperv_switch_name" {
@@ -28,17 +28,21 @@ variable "vagrant_box" {
 }
 
 source "hyperv-iso" "ubuntu-amd64" {
+  cd_label = "cidata"
+  cd_files = [
+    "tmp/hyperv-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data",
+  ]
   boot_command = [
-    "<esc>",
-    "linux /linux",
-    " auto=true",
-    " url={{.HTTPIP}}:{{.HTTPPort}}/tmp/preseed-hyperv.txt",
-    " hostname=vagrant",
+    "e",
+    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+    "linux /casper/vmlinuz",
     " net.ifnames=0",
-    " DEBCONF_DEBUG=5",
+    " autoinstall",
     "<enter>",
-    "initrd /initrd.gz<enter>",
-    "boot<enter>",
+    "initrd /casper/initrd",
+    "<enter>",
+    "<f10>",
   ]
   boot_wait         = "5s"
   boot_order        = ["SCSI:0:0"]
@@ -62,21 +66,21 @@ source "hyperv-iso" "ubuntu-amd64" {
 
 source "qemu" "ubuntu-amd64" {
   accelerator = "kvm"
+  cd_label    = "cidata"
+  cd_files = [
+    "autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data",
+  ]
   boot_command = [
-    "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "linux initrd=initrd.gz",
-    " auto=true",
-    " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
-    " hostname=vagrant",
+    "e",
+    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+    "linux /casper/vmlinuz",
     " net.ifnames=0",
-    " DEBCONF_DEBUG=5",
+    " autoinstall",
     "<enter>",
+    "initrd /casper/initrd",
+    "<enter>",
+    "<f10>",
   ]
   boot_wait      = "5s"
   disk_discard   = "unmap"
@@ -99,17 +103,19 @@ source "qemu" "ubuntu-amd64" {
 
 source "qemu" "ubuntu-uefi-amd64" {
   accelerator = "kvm"
+  cd_label    = "cidata"
+  cd_files = [
+    "tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data",
+  ]
   boot_command = [
     "e",
     "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
-    "<enter>", "linux /linux",
-    " auto=true",
-    " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
-    " hostname=vagrant",
+    "linux /casper/vmlinuz",
     " net.ifnames=0",
-    " DEBCONF_DEBUG=5",
+    " autoinstall",
     "<enter>",
-    "initrd /initrd.gz",
+    "initrd /casper/initrd",
     "<enter>",
     "<f10>",
   ]
@@ -137,21 +143,21 @@ source "qemu" "ubuntu-uefi-amd64" {
 }
 
 source "virtualbox-iso" "ubuntu-amd64" {
+  cd_label = "cidata"
+  cd_files = [
+    "autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data",
+  ]
   boot_command = [
-    "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "linux initrd=initrd.gz",
-    " auto=true",
-    " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
-    " hostname=vagrant",
+    "e",
+    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+    "linux /casper/vmlinuz",
     " net.ifnames=0",
-    " DEBCONF_DEBUG=5",
+    " autoinstall",
     "<enter>",
+    "initrd /casper/initrd",
+    "<enter>",
+    "<f10>",
   ]
   boot_wait            = "5s"
   disk_size            = var.disk_size
@@ -195,6 +201,7 @@ build {
     execute_command   = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
+      "upgrade.sh",
       "provision-guest-additions.sh",
       "provision.sh",
     ]

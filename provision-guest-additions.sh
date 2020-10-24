@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euxo pipefail
 
+# wait for cloud-init to finish.
+cloud-init status --long --wait
+
 # install the Guest Additions.
 if [ -n "$(lspci | grep VirtualBox)" ]; then
 # install the VirtualBox Guest Additions.

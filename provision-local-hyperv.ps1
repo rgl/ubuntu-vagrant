@@ -2,8 +2,8 @@
 # also shows example values):
 #
 #   PACKER_VERSION          1.6.0
-#   PACKER_VM_NAME          packer-ubuntu-20.04-amd64-hyperv
-#   PACKER_BUILD_NAME       ubuntu-20.04-amd64-hyperv
+#   PACKER_VM_NAME          packer-ubuntu-20.10-amd64-hyperv
+#   PACKER_BUILD_NAME       ubuntu-20.10-amd64-hyperv
 #   PACKER_BUILDER_TYPE     hyperv-iso
 #   PACKER_HTTP_ADDR        10.0.0.123:1
 #   PACKER_HTTP_IP          10.0.0.123
