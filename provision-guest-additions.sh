@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -euxo pipefail
 
 # install the Guest Additions.
 if [ -n "$(lspci | grep VirtualBox)" ]; then

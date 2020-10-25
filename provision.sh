@@ -1,8 +1,5 @@
 #!/bin/bash
-# abort this script when a command fails or a unset variable is used.
-set -eu
-# echo all the executed commands.
-set -x
+set -euxo pipefail
 
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically adds vagrant into the sudo group.
