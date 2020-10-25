@@ -198,6 +198,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision 'shell', inline: 'cloud-init status --long --wait', name: 'wait for cloud-init to finish'
+  config.vm.provision 'shell', inline: 'echo "firmware type is $([ -d /sys/firmware/efi ] && echo \'UEFI\' || echo \'BIOS\')"', name: 'firmware type'
   config.vm.provision 'shell', inline: "echo \"provisioning user is $(id #{$provision_username})\""
   config.vm.provision 'shell', inline: 'echo "machine-id is $(cat /etc/machine-id)"'
   config.vm.provision 'shell', inline: 'cat /etc/os-release', name: 'os-release'
