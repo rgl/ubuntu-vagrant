@@ -18,6 +18,20 @@ d-i time/zone string Europe/Lisbon
 d-i partman-auto/method string regular
 d-i partman-auto/expert_recipe string \
       root ::                         \
+        1 1 1 free                    \
+          $iflabel{ gpt }             \
+          $gptonly{ }                 \
+          $primary{ }                 \
+          $bios_boot{ }               \
+          method{ biosgrub }          \
+        .                             \
+        100 1 100 fat32               \
+          $iflabel{ gpt }             \
+          $gptonly{ }                 \
+          $primary{ }                 \
+          method{ efi }               \
+          format{ }                   \
+        .                             \
         1 1 -1 ext4                   \
           $primary{ }                 \
           $bootable{ }                \
