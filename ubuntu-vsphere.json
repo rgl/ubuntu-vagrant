@@ -23,8 +23,12 @@
       "http_directory": ".",
       "type": "vsphere-iso",
       "guest_os_type": "ubuntu64Guest",
-      "disk_size": "{{user `disk_size`}}",
-      "disk_thin_provisioned": true,
+      "storage": [
+        {
+          "disk_size": "{{user `disk_size`}}",
+          "disk_thin_provisioned": true
+        }
+      ],
       "disk_controller_type": "pvscsi",
       "vcenter_server": "{{user `vsphere_host`}}",
       "username": "{{user `vsphere_username`}}",
@@ -35,8 +39,12 @@
       "host": "{{user `vsphere_esxi_host`}}",
       "folder": "{{user `vsphere_folder`}}",
       "datastore": "{{user `vsphere_datastore`}}",
-      "network_card": "vmxnet3",
-      "network": "{{user `vsphere_network`}}",
+      "network_adapters": [
+        {
+          "network": "{{user `vsphere_network`}}",
+          "network_card": "vmxnet3"
+        }
+      ],
       "convert_to_template": true,
       "RAM": 2048,
       "CPUs": 4,
