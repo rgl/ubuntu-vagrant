@@ -72,7 +72,7 @@ Try the example guest:
 cd example
 apt-get install -y virt-manager libvirt-dev
 vagrant plugin install vagrant-libvirt
-vagrant up --provider=libvirt --no-destroy-on-error
+vagrant up --provider=libvirt --no-destroy-on-error --no-tty
 vagrant ssh
 exit
 vagrant destroy -f
@@ -88,7 +88,7 @@ Try the example guest:
 
 ```bash
 cd example
-vagrant up --provider=virtualbox --no-destroy-on-error
+vagrant up --provider=virtualbox --no-destroy-on-error --no-tty
 vagrant ssh
 exit
 vagrant destroy -f
@@ -149,7 +149,7 @@ cd example
 #    with choco install -y carbon.
 # TODO set VM screen resolution.
 PowerShell -Command 'Import-Module Carbon; Grant-Permission . $env:VAGRANT_SMB_USERNAME FullControl'
-vagrant up --provider=hyperv
+vagrant up --provider=hyperv --no-destroy-on-error --no-tty
 vagrant ssh
 exit
 vagrant destroy -f
@@ -199,7 +199,7 @@ Try the example guest:
 
 ```bash
 source secrets.sh
-vagrant up --provider=vsphere --no-destroy-on-error
+vagrant up --provider=vsphere --no-destroy-on-error --no-tty
 vagrant ssh
 exit
 vagrant destroy -f
