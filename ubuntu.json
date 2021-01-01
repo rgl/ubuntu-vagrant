@@ -47,6 +47,47 @@
       "shutdown_command": "echo vagrant | sudo -S poweroff"
     },
     {
+      "name": "ubuntu-{{user `version`}}-uefi-amd64-libvirt",
+      "type": "qemu",
+      "accelerator": "kvm",
+      "qemuargs": [
+        ["-bios", "/usr/share/ovmf/OVMF.fd"],
+        ["-device", "virtio-vga"],
+        ["-device", "virtio-scsi-pci,id=scsi0"],
+        ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
+        ["-m", "2048"],
+        ["-smp", "2"]
+      ],
+      "headless": true,
+      "http_directory": ".",
+      "format": "qcow2",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_interface": "virtio-scsi",
+      "disk_discard": "unmap",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_timeout": "60m",
+      "boot_wait": "5s",
+      "boot_command": [
+        "e",
+        "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+        "<enter>",
+        "linux /linux",
+        " auto=true",
+        " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
+        " hostname=vagrant",
+        " net.ifnames=0",
+        " DEBCONF_DEBUG=5",
+        "<enter>",
+        "initrd /initrd.gz",
+        "<enter>",
+        "<f10>"
+      ],
+      "shutdown_command": "echo vagrant | sudo -S poweroff"
+    },
+    {
       "name": "ubuntu-{{user `version`}}-amd64-virtualbox",
       "type": "virtualbox-iso",
       "guest_os_type": "Ubuntu_64",
@@ -157,7 +198,20 @@
     {
       "type": "vagrant",
       "output": "{{.BuildName}}.box",
-      "vagrantfile_template": "Vagrantfile.template"
+      "vagrantfile_template": "Vagrantfile.template",
+      "only": [
+        "ubuntu-{{user `version`}}-amd64-libvirt",
+        "ubuntu-{{user `version`}}-amd64-virtualbox",
+        "ubuntu-{{user `version`}}-amd64-hyperv"
+      ]
+    },
+    {
+      "type": "vagrant",
+      "output": "{{.BuildName}}.box",
+      "vagrantfile_template": "Vagrantfile-uefi.template",
+      "only": [
+        "ubuntu-{{user `version`}}-uefi-amd64-libvirt"
+      ]
     }
   ]
 }
