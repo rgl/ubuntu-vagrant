@@ -4,7 +4,7 @@ Currently this targets [Ubuntu 20.04 (Focal Fossa)](https://wiki.ubuntu.com/Foca
 
 # Usage
 
-Install Packer 1.6+ and Vagrant 2.2.9+.
+Install Packer 1.7+ and Vagrant 2.2.14+.
 
 ## Ubuntu Host
 
@@ -159,12 +159,11 @@ vagrant destroy -f
 
 Download [govc](https://github.com/vmware/govmomi/releases/latest) and place it inside your `/usr/local/bin` directory.
 
-Install the [vsphere vagrant plugin](https://github.com/nsidc/vagrant-vsphere), set your vSphere details, and test the connection to vSphere:
+Set your VMware vSphere details and test the connection:
 
 ```bash
 sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev
 vagrant plugin install vagrant-vsphere
-cd example
 cat >secrets.sh <<EOF
 export GOVC_INSECURE='1'
 export GOVC_HOST='vsphere.local'
@@ -180,6 +179,7 @@ export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-20.04-amd64-vspher
 export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'
+export VSPHERE_IP_WAIT_ADDRESS='0.0.0.0/0'
 EOF
 source secrets.sh
 # see https://github.com/vmware/govmomi/blob/master/govc/USAGE.md
@@ -189,7 +189,7 @@ govc datacenter.info # list datacenters
 govc find # find all managed objects
 ```
 
-Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.json](ubuntu.json) file) and place it inside the datastore as defined by the `vsphere_iso_url` user variable that is inside the [packer template](ubuntu-vsphere.json).
+Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.pkr.hcl](ubuntu.pkr.hcl) file) and place it inside the datastore as defined by the `iso_paths` property that is inside the [packer template](ubuntu-vsphere.pkr.hcl) file.
 
 See the [example Vagrantfile](example/Vagrantfile) to see how you could use a cloud-init configuration to configure the VM.
 
@@ -199,6 +199,7 @@ Try the example guest:
 
 ```bash
 source secrets.sh
+cd example
 vagrant up --provider=vsphere --no-destroy-on-error --no-tty
 vagrant ssh
 exit

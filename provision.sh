@@ -23,7 +23,7 @@ if [ -n "$(lspci | grep VMware | head -1)" ]; then
 # see https://github.com/vmware/cloud-init-vmware-guestinfo
 apt-get install -y --no-install-recommends curl
 apt-get install -y --no-install-recommends python3-pip
-export GIT_REF='242f539c80fb6167c023a0098993fcdb71a19e54'
+export GIT_REF='v1.4.1'
 wget -qO- https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/$GIT_REF/install.sh \
     | bash -x -
 unset GIT_REF

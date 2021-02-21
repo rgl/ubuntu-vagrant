@@ -196,6 +196,12 @@ Vagrant.configure(2) do |config|
       'guestinfo.userdata' => gzip_base64("#cloud-config\n#{cloud_init_user_data.to_json}"),
       'guestinfo.userdata.encoding' => 'gzip+base64',
     }
+    if Vagrant::Util::Platform.windows?
+      override.vm.synced_folder '.', '/vagrant',
+        type: 'smb',
+        smb_username: ENV['VAGRANT_SMB_USERNAME'] || ENV['USER'],
+        smb_password: ENV['VAGRANT_SMB_PASSWORD']
+    end
   end
 
   config.vm.provision 'shell', inline: 'cloud-init status --long --wait', name: 'wait for cloud-init to finish'
