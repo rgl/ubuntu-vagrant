@@ -5,12 +5,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "http://releases.ubuntu.com/groovy/ubuntu-20.10-live-server-amd64.iso"
+  default = "https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/hirsute-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:defdc1ad3af7b661fe2b4ee861fb6fdb5f52039389ef56da6efc05e6adfe3d45"
+  default = "sha256:e4089c47104375b59951bad6c7b3ee5d9f6d80bfac4597e43a716bb8f5c1f3b0"
 }
 
 variable "hyperv_switch_name" {
