@@ -5,7 +5,7 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/hirsute-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/21.04/ubuntu-21.04-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
