@@ -2,6 +2,8 @@ This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso 
 
 Currently this targets [Ubuntu 20.04 (Focal Fossa)](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes).
 
+Other Ubuntu versions might be available in a [separate branch](https://github.com/rgl/ubuntu-vagrant/branches).
+
 # Usage
 
 Install Packer 1.7+ and Vagrant 2.2.14+.
