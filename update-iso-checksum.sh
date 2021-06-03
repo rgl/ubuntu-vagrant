@@ -15,6 +15,6 @@ gpg --keyid-format long --keyserver hkp://keyserver.ubuntu.com --recv-keys \
     0x871920D1991BC93C
 gpg --verify SHA256SUMS.gpg SHA256SUMS
 iso_checksum=$(grep mini.iso SHA256SUMS | awk '{print $1}')
-sed -i -E "s,(\"sha256:)([a-f0-9]+)(\"),\\1$iso_checksum\\3,g" ubuntu.pkr.hcl
+sed -i -E "s,\"sha.+?:[a-f0-9]*\",\"sha256:$iso_checksum\",g" ubuntu.pkr.hcl
 rm SHA256SUMS*
 echo 'iso_checksum updated successfully'
