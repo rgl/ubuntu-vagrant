@@ -196,7 +196,7 @@ Vagrant.configure(2) do |config|
       'guestinfo.userdata' => gzip_base64("#cloud-config\n#{cloud_init_user_data.to_json}"),
       'guestinfo.userdata.encoding' => 'gzip+base64',
     }
-    if Vagrant::Util::Platform.windows?
+    if ENV['VAGRANT_SMB_PASSWORD']
       override.vm.synced_folder '.', '/vagrant',
         type: 'smb',
         smb_username: ENV['VAGRANT_SMB_USERNAME'] || ENV['USER'],
