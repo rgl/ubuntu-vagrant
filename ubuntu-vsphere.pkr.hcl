@@ -59,6 +59,11 @@ variable "vsphere_ip_wait_address" {
   description = "IP CIDR which guests will use to reach the host. see https://github.com/hashicorp/packer/blob/ff5b55b560095ca88421d3f1ad8b8a66646b7ab6/builder/vsphere/common/step_http_ip_discover.go#L32"
 }
 
+variable "vsphere_os_iso" {
+  type        = string
+  default     = env("VSPHERE_OS_ISO")
+}
+
 source "vsphere-iso" "ubuntu-amd64" {
   CPUs = 4
   RAM  = 2048
@@ -94,7 +99,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   http_directory      = "."
   ip_wait_address     = var.vsphere_ip_wait_address
   iso_paths = [
-    "[${var.vsphere_datastore}] iso/ubuntu-${var.version}-amd64-netboot-mini.iso",
+    var.vsphere_os_iso
   ]
   network_adapters {
     network      = var.vsphere_network
