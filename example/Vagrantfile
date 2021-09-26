@@ -88,8 +88,8 @@ cloud_init_user_data = {
 }
 
 Vagrant.configure(2) do |config|
-  config.vm.box = 'ubuntu-21.04-amd64'
-  #config.vm.box = 'ubuntu-21.04-uefi-amd64'
+  config.vm.box = 'ubuntu-21.10-amd64'
+  #config.vm.box = 'ubuntu-21.10-uefi-amd64'
 
   config.vm.hostname = 'example.test'
 

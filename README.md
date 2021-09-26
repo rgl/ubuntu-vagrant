@@ -1,6 +1,6 @@
 This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso To Vagrant Box](http://blog.ruilopes.com/from-iso-to-vagrant-box.html) article.
 
-Currently this targets [Ubuntu 21.04 (Hirsute Hippo)](https://wiki.ubuntu.com/HirsuteHippo/ReleaseNotes).
+Currently this targets [Ubuntu 21.10 (Impish Indri)](https://wiki.ubuntu.com/ImpishIndri/ReleaseNotes).
 
 Other Ubuntu versions might be available in a [separate branch](https://github.com/rgl/ubuntu-vagrant/branches).
 
@@ -177,7 +177,7 @@ export GOVC_CLUSTER='Cluster'
 export GOVC_DATASTORE='Datastore'
 export VSPHERE_ESXI_HOST='esxi.local'
 export VSPHERE_TEMPLATE_FOLDER='test/templates'
-export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-21.04-amd64-vsphere"
+export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-21.10-amd64-vsphere"
 export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'
