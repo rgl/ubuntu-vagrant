@@ -166,7 +166,7 @@ Set your VMware vSphere details and test the connection:
 ```bash
 sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev
 vagrant plugin install vagrant-vsphere
-cat >secrets.sh <<EOF
+cat >secrets.sh <<'EOF'
 export GOVC_INSECURE='1'
 export GOVC_HOST='vsphere.local'
 export GOVC_URL="https://$GOVC_HOST/sdk"
@@ -175,6 +175,7 @@ export GOVC_PASSWORD='password'
 export GOVC_DATACENTER='Datacenter'
 export GOVC_CLUSTER='Cluster'
 export GOVC_DATASTORE='Datastore'
+export VSPHERE_OS_ISO="[$GOVC_DATASTORE] iso/ubuntu-21.10-beta-live-server-amd64.iso"
 export VSPHERE_ESXI_HOST='esxi.local'
 export VSPHERE_TEMPLATE_FOLDER='test/templates'
 export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-21.10-amd64-vsphere"
@@ -182,6 +183,15 @@ export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'
 export VSPHERE_IP_WAIT_ADDRESS='0.0.0.0/0'
+# set the credentials that the guest will use
+# to connect to this host smb share.
+# NB you should create a new local user named _vagrant_share
+#    and use that one here instead of your user credentials.
+# NB it would be nice for this user to have its credentials
+#    automatically rotated, if you implement that feature,
+#    let me known!
+export VAGRANT_SMB_USERNAME='_vagrant_share'
+export VAGRANT_SMB_PASSWORD=''
 EOF
 source secrets.sh
 # see https://github.com/vmware/govmomi/blob/master/govc/USAGE.md
