@@ -150,7 +150,7 @@ cd example
 # NB you must first install the Carbon PowerShell module
 #    with choco install -y carbon.
 # TODO set VM screen resolution.
-PowerShell -Command 'Import-Module Carbon; Grant-Permission . $env:VAGRANT_SMB_USERNAME FullControl'
+PowerShell -Command '&"$env:ChocolateyInstall/lib/Carbon/Carbon/Import-Carbon.ps1"; Grant-CPermission . $env:VAGRANT_SMB_USERNAME FullControl'
 vagrant up --provider=hyperv --no-destroy-on-error --no-tty
 vagrant ssh
 exit
