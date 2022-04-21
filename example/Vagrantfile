@@ -152,16 +152,21 @@ Vagrant.configure(2) do |config|
           'PowerShell',
           '-NoLogo',
           '-NoProfile',
+          '-NonInteractive',
           '-ExecutionPolicy',
           'Bypass',
           '-Command',
           <<~COMMAND
             $vmName = '#{machine.provider_config.vmname}'
+            # attach the cloud-init data iso.
             $drive = @(Get-VMDvdDrive $vmName | Where-Object {$_.Path -like '*cidata.iso'})
             if (!$drive) {
               Write-Host 'Adding the cidata.iso DVD to the VM...'
               Add-VMDvdDrive $vmName -Path $PWD/tmp/cidata.iso
             }
+            # enable all the integration services.
+            # NB because, for some reason, sometimes "Guest Service Interface" is not enabled.
+            Get-VMIntegrationService $vmName | Enable-VMIntegrationService
           COMMAND
         )
       end

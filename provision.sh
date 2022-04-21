@@ -18,6 +18,8 @@ chown -R vagrant:vagrant .
 
 # add additional cloud-init data sources.
 if [ -n "$(lspci | grep VMware | head -1)" ]; then
+# only install when the current cloud-init does not have the VMware datasource.
+if [ ! -f /usr/lib/python3/dist-packages/cloudinit/sources/DataSourceVMware.py ]; then
 # add support for the vmware vmx guestinfo cloud-init datasource.
 # NB there is plans to include this datasource in the upstream cloud-init project at
 #    https://github.com/vmware/cloud-init-vmware-guestinfo/issues/2 but in the meantime
@@ -31,6 +33,15 @@ wget -qO- https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/$
 unset GIT_REF
 apt-get remove -y --purge curl
 fi
+fi
+
+# only enable the supported cloud-init datasources.
+# NB this is especially required for not waiting for datasources that try to
+#    contact the metadata service at http://169.254.169.254 (like the AWS
+#    datasource) that do not exist in our supported hypervisors.
+# NB you cannot use debconf-set-selections with dpkg-reconfigure (it ignores
+#    debconf), so we have to directly edit the configuration.
+echo 'datasource_list: [NoCloud, ConfigDrive, VMware, None]' >/etc/cloud/cloud.cfg.d/95_datasources.cfg
 
 # install the nfs client to support nfs synced folders in vagrant.
 apt-get install -y nfs-common
