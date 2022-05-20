@@ -62,6 +62,7 @@ source "hyperv-iso" "ubuntu-amd64" {
 
 source "qemu" "ubuntu-amd64" {
   accelerator = "kvm"
+  machine_type = "q35"
   boot_command = [
     "<tab>",
     "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
@@ -79,17 +80,20 @@ source "qemu" "ubuntu-amd64" {
     "<enter>",
   ]
   boot_wait      = "5s"
+  disk_cache     = "unsafe"
   disk_discard   = "unmap"
   disk_interface = "virtio-scsi"
   disk_size      = var.disk_size
   format         = "qcow2"
   headless       = true
+  net_device     = "virtio-net"
   http_directory = "."
   iso_checksum   = var.iso_checksum
   iso_url        = var.iso_url
+  cpus           = 2
+  memory         = 2048
   qemuargs = [
-    ["-m", "2048"],
-    ["-smp", "2"],
+    ["-cpu", "host"],
   ]
   ssh_username     = "vagrant"
   ssh_password     = "vagrant"
@@ -99,6 +103,7 @@ source "qemu" "ubuntu-amd64" {
 
 source "qemu" "ubuntu-uefi-amd64" {
   accelerator = "kvm"
+  machine_type = "q35"
   boot_command = [
     "e",
     "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
@@ -119,16 +124,18 @@ source "qemu" "ubuntu-uefi-amd64" {
   disk_size      = var.disk_size
   format         = "qcow2"
   headless       = true
+  net_device     = "virtio-net"
   http_directory = "."
   iso_checksum   = var.iso_checksum
   iso_url        = var.iso_url
+  cpus           = 2
+  memory         = 2048
   qemuargs = [
+    ["-cpu", "host"],
     ["-bios", "/usr/share/ovmf/OVMF.fd"],
     ["-device", "virtio-vga"],
     ["-device", "virtio-scsi-pci,id=scsi0"],
     ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
-    ["-m", "2048"],
-    ["-smp", "2"],
   ]
   ssh_username     = "vagrant"
   ssh_password     = "vagrant"

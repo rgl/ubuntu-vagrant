@@ -104,7 +104,7 @@ Vagrant.configure(2) do |config|
     lv.cpu_mode = 'host-passthrough'
     lv.nested = true # nested virtualization.
     lv.keymap = 'pt'
-    lv.storage :file, :device => :cdrom, :path => create_cloud_init_iso_trigger(config, 'kvm', cloud_init_user_data, cloud_init_network_config)
+    lv.storage :file, :device => :cdrom, :bus => 'sata', :path => create_cloud_init_iso_trigger(config, 'kvm', cloud_init_user_data, cloud_init_network_config)
     # add example firmware string.
     # NB name has a maximum of 55 ascii characters.
     # NB this will be available at /sys/firmware/qemu_fw_cfg/by_name/opt/com.example/message/raw
