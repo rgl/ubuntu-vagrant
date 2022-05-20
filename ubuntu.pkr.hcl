@@ -65,12 +65,7 @@ source "qemu" "ubuntu-amd64" {
   machine_type = "q35"
   boot_command = [
     "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+    "<leftCtrlOn>u<leftCtrlOff>",
     "linux initrd=initrd.gz",
     " auto=true",
     " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",
@@ -146,12 +141,7 @@ source "qemu" "ubuntu-uefi-amd64" {
 source "virtualbox-iso" "ubuntu-amd64" {
   boot_command = [
     "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+    "<leftCtrlOn>u<leftCtrlOff>",
     "linux initrd=initrd.gz",
     " auto=true",
     " url={{.HTTPIP}}:{{.HTTPPort}}/preseed.txt",

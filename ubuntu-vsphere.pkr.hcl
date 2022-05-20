@@ -69,12 +69,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   RAM  = 2048
   boot_command = [
     "<tab>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
-    "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+    "<leftCtrlOn>u<leftCtrlOff>",
     "linux initrd=initrd.gz",
     " auto=true",
     " url={{.HTTPIP}}:{{.HTTPPort}}/tmp/preseed-vsphere.txt",
