@@ -52,7 +52,7 @@ tmp/preseed-hyperv.txt: preseed.txt
 ubuntu-${VERSION}-amd64-vsphere.box: tmp/preseed-vsphere.txt provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
-		packer build -only=vsphere-iso.ubuntu-amd64 -timestamp-ui ubuntu-vsphere.pkr.hcl
+		packer build -only=vsphere-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu-vsphere.pkr.hcl
 	rm -rf tmp/$@-contents
 	mkdir -p tmp/$@-contents
 	echo '{"provider":"vsphere"}' >tmp/$@-contents/metadata.json
