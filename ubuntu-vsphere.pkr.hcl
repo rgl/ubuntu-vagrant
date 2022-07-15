@@ -96,7 +96,6 @@ source "vsphere-iso" "ubuntu-amd64" {
   folder              = var.vsphere_folder
   datastore           = var.vsphere_datastore
   guest_os_type       = "ubuntu64Guest"
-  http_directory      = "."
   ip_wait_address     = var.vsphere_ip_wait_address
   iso_paths = [
     var.vsphere_os_iso

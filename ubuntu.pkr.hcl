@@ -52,7 +52,6 @@ source "hyperv-iso" "ubuntu-amd64" {
   disk_size         = var.disk_size
   generation        = 2
   headless          = true
-  http_directory    = "."
   iso_checksum      = var.iso_checksum
   iso_url           = var.iso_url
   switch_name       = var.hyperv_switch_name
@@ -91,7 +90,6 @@ source "qemu" "ubuntu-amd64" {
   format         = "qcow2"
   headless       = true
   net_device     = "virtio-net"
-  http_directory = "."
   iso_checksum   = var.iso_checksum
   iso_url        = var.iso_url
   cpus           = 2
@@ -131,7 +129,6 @@ source "qemu" "ubuntu-uefi-amd64" {
   format         = "qcow2"
   headless       = true
   net_device     = "virtio-net"
-  http_directory = "."
   iso_checksum   = var.iso_checksum
   iso_url        = var.iso_url
   cpus           = 2
@@ -173,7 +170,6 @@ source "virtualbox-iso" "ubuntu-amd64" {
   hard_drive_discard   = true
   hard_drive_interface = "sata"
   headless             = true
-  http_directory       = "."
   iso_checksum         = var.iso_checksum
   iso_url              = var.iso_url
   vboxmanage = [
