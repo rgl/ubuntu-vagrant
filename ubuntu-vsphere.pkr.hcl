@@ -107,6 +107,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   disk_controller_type = ["pvscsi"]
   ssh_password         = "vagrant"
   ssh_username         = "vagrant"
+  ssh_timeout          = "60m"
   shutdown_command     = "echo vagrant | sudo -S poweroff"
 }
 
