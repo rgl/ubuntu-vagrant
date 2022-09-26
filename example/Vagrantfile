@@ -114,7 +114,11 @@ Vagrant.configure(2) do |config|
     # see https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-qemu_fw_cfg
     lv.qemuargs :value => '-fw_cfg'
     lv.qemuargs :value => 'name=opt/com.example/message,string=Hello World!'
-    config.vm.synced_folder '.', '/vagrant', type: 'nfs', nfs_version: '4.2', nfs_udp: false
+    # configure the vagrant synced folder.
+    lv.memorybacking :source, :type => 'memfd'  # required for virtiofs.
+    lv.memorybacking :access, :mode => 'shared' # required for virtiofs.
+    config.vm.synced_folder '.', '/vagrant', type: 'virtiofs'
+    #config.vm.synced_folder '.', '/vagrant', type: 'nfs', nfs_version: '4.2', nfs_udp: false
   end
 
   config.vm.provider 'virtualbox' do |vb, config|
