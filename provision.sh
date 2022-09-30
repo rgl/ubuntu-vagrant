@@ -4,10 +4,6 @@ set -euxo pipefail
 # wait for cloud-init to finish.
 cloud-init status --long --wait
 
-# let the sudo group members use root permissions without a password.
-# NB d-i automatically adds vagrant into the sudo group.
-sed -i -E 's,^%sudo\s+.+,%sudo ALL=(ALL) NOPASSWD:ALL,g' /etc/sudoers
-
 # install the vagrant public key.
 # NB vagrant will replace it on the first run.
 install -d -m 700 /home/vagrant/.ssh

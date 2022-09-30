@@ -201,11 +201,38 @@ build {
   ]
 
   provisioner "shell" {
-    execute_command   = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"
-    expect_disconnect = true
+    execute_command = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"
     scripts = [
       "upgrade.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    expect_disconnect = true
+    scripts = [
+      "reboot.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    scripts = [
       "provision-guest-additions.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    expect_disconnect = true
+    scripts = [
+      "reboot.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    scripts = [
       "provision.sh",
     ]
   }

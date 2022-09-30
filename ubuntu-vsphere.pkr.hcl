@@ -119,11 +119,34 @@ build {
   sources = ["source.vsphere-iso.ubuntu-amd64"]
 
   provisioner "shell" {
-    execute_command   = "echo vagrant | sudo -S bash {{ .Path }}"
-    expect_disconnect = true
+    execute_command = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"
     scripts = [
       "upgrade.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    expect_disconnect = true
+    scripts = [
+      "reboot.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    scripts = [
       "provision-guest-additions.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    expect_disconnect = true
+    scripts = [
+      "reboot.sh",
+    ]
+  }
+
+  provisioner "shell" {
+    scripts = [
       "provision.sh",
     ]
   }

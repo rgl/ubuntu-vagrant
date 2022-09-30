@@ -45,6 +45,3 @@ else
 echo 'ERROR: Unknown VM host.'
 exit 1
 fi
-
-# reboot.
-nohup bash -c "ps -eo pid,comm | awk '/sshd/{print \$1}' | xargs kill; sync; reboot"
