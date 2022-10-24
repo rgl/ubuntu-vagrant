@@ -73,8 +73,13 @@ EOF
 
 # reset cloud-init.
 cloud-init clean --logs --seed
-rm /etc/cloud/cloud.cfg.d/99-installer.cfg
-rm /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
+cat >/etc/netplan/50-cloud-init.yaml <<'EOF'
+network:
+    version: 2
+    ethernets:
+        eth0:
+            dhcp4: true
+EOF
 
 # reset the machine-id.
 # NB systemd will re-generate it on the next boot.
