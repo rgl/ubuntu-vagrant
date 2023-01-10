@@ -60,7 +60,7 @@ source "hyperv-iso" "ubuntu-amd64" {
   ssh_username      = "vagrant"
   ssh_password      = "vagrant"
   ssh_timeout       = "60m"
-  shutdown_command  = "echo vagrant | sudo -S poweroff"
+  shutdown_command  = "sudo -S poweroff"
 }
 
 source "qemu" "ubuntu-amd64" {
@@ -100,7 +100,7 @@ source "qemu" "ubuntu-amd64" {
   ssh_username     = "vagrant"
   ssh_password     = "vagrant"
   ssh_timeout      = "60m"
-  shutdown_command = "echo vagrant | sudo -S poweroff"
+  shutdown_command = "sudo -S poweroff"
 }
 
 source "qemu" "ubuntu-uefi-amd64" {
@@ -143,7 +143,7 @@ source "qemu" "ubuntu-uefi-amd64" {
   ssh_username     = "vagrant"
   ssh_password     = "vagrant"
   ssh_timeout      = "60m"
-  shutdown_command = "echo vagrant | sudo -S poweroff"
+  shutdown_command = "sudo -S poweroff"
 }
 
 source "virtualbox-iso" "ubuntu-amd64" {
@@ -188,7 +188,7 @@ source "virtualbox-iso" "ubuntu-amd64" {
   ssh_username        = "vagrant"
   ssh_password        = "vagrant"
   ssh_timeout         = "60m"
-  shutdown_command    = "echo vagrant | sudo -S poweroff"
+  shutdown_command    = "sudo -S poweroff"
   post_shutdown_delay = "2m"
 }
 

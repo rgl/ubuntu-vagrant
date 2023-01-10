@@ -112,7 +112,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   ssh_password         = "vagrant"
   ssh_username         = "vagrant"
   ssh_timeout          = "60m"
-  shutdown_command     = "echo vagrant | sudo -S poweroff"
+  shutdown_command     = "sudo -S poweroff"
 }
 
 build {
