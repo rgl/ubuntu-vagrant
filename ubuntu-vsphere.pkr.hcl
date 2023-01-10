@@ -126,6 +126,7 @@ build {
   }
 
   provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",
@@ -133,12 +134,14 @@ build {
   }
 
   provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
     scripts = [
       "provision-guest-additions.sh",
     ]
   }
 
   provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",
@@ -146,6 +149,7 @@ build {
   }
 
   provisioner "shell" {
+    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
     scripts = [
       "provision.sh",
     ]
