@@ -117,7 +117,7 @@ PowerShell -Command 'Set-NetFirewallProfile -DisabledInterfaceAliases (Get-NetAd
 Create the base image in a bash shell with Administrative privileges:
 
 ```bash
-cat >secrets.sh <<EOF
+cat >secrets-hyperv.sh <<EOF
 # set this value when you need to set the VM Switch Name.
 export HYPERV_SWITCH_NAME='Default Switch'
 # set this value when you need to set the VM VLAN ID.
@@ -135,7 +135,7 @@ export VAGRANT_SMB_PASSWORD=''
 # NB execute if the VM fails to obtain an IP address from DHCP.
 PowerShell -Command 'Set-NetFirewallProfile -DisabledInterfaceAliases (Get-NetAdapter -name "vEthernet*" | Where-Object {$_.ifIndex}).InterfaceAlias'
 EOF
-source secrets.sh
+source secrets-hyperv.sh
 make build-hyperv
 ```
 
@@ -166,7 +166,7 @@ Set your VMware vSphere details and test the connection:
 ```bash
 sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev
 vagrant plugin install vagrant-vsphere
-cat >secrets.sh <<'EOF'
+cat >secrets-vsphere.sh <<'EOF'
 export GOVC_INSECURE='1'
 export GOVC_HOST='vsphere.local'
 export GOVC_URL="https://$GOVC_HOST/sdk"
@@ -193,7 +193,7 @@ export VSPHERE_IP_WAIT_ADDRESS='0.0.0.0/0'
 export VAGRANT_SMB_USERNAME='_vagrant_share'
 export VAGRANT_SMB_PASSWORD=''
 EOF
-source secrets.sh
+source secrets-vsphere.sh
 # see https://github.com/vmware/govmomi/blob/master/govc/USAGE.md
 govc version
 govc about
@@ -210,7 +210,7 @@ Type `make build-vsphere` and follow the instructions.
 Try the example guest:
 
 ```bash
-source secrets.sh
+source secrets-vsphere.sh
 cd example
 vagrant up --provider=vsphere --no-destroy-on-error --no-tty
 vagrant ssh
