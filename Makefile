@@ -16,17 +16,13 @@ ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh 
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
-	@echo BOX successfully built!
-	@echo to add to local vagrant install do:
-	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
+	@./box-metadata.sh libvirt ubuntu-${VERSION}-amd64 $@
 
 ubuntu-${VERSION}-uefi-amd64-libvirt.box: tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
 	rm -f $@
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
-	@echo BOX successfully built!
-	@echo to add to local vagrant install do:
-	@echo vagrant box add -f ubuntu-${VERSION}-uefi-amd64 $@
+	@./box-metadata.sh libvirt ubuntu-${VERSION}-uefi-amd64 $@
 
 tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
@@ -36,17 +32,13 @@ ubuntu-${VERSION}-amd64-virtualbox.box: autoinstall-cloud-init-data/* provision.
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=virtualbox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
-	@echo BOX successfully built!
-	@echo to add to local vagrant install do:
-	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
+	@./box-metadata.sh virtualbox ubuntu-${VERSION}-amd64 $@
 
 ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=hyperv-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
-	@echo BOX successfully built!
-	@echo to add to local vagrant install do:
-	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
+	@./box-metadata.sh hyperv ubuntu-${VERSION}-amd64 $@
 
 # see https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/supported-ubuntu-virtual-machines-on-hyper-v
 tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
