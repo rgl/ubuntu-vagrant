@@ -148,7 +148,7 @@ Vagrant.configure(2) do |config|
       type: 'smb',
       smb_username: ENV['VAGRANT_SMB_USERNAME'] || ENV['USER'],
       smb_password: ENV['VAGRANT_SMB_PASSWORD']
-    # add the cloud-init data iso to the hyperv vm.
+    # add the cloud-init data iso and configure the hyperv vm.
     config.trigger.before :'VagrantPlugins::HyperV::Action::StartInstance', type: :action do |trigger|
       trigger.ruby do |env, machine|
         create_cloud_init_iso('tmp/cidata.iso', env, config, nil, cloud_init_user_data, cloud_init_network_config)
@@ -171,6 +171,9 @@ Vagrant.configure(2) do |config|
             # enable all the integration services.
             # NB because, for some reason, sometimes "Guest Service Interface" is not enabled.
             Get-VMIntegrationService $vmName | Enable-VMIntegrationService
+            # configure the boot loader to boot from disk.
+            $bootDrive = Get-VMHardDiskDrive $vmName | Select-Object -First 1
+            Set-VMFirmware $vmName -BootOrder $bootDrive
           COMMAND
         )
       end
