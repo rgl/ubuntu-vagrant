@@ -5,12 +5,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.1-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.2-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:10f19c5b2b8d6db711582e0e27f5116296c34fe4b313ba45f9b201a5007056cb"
+  default = "sha256:5e38b55d57d94ff029719342357325ed3bda38fa80054f9330dc789cd2d43931"
 }
 
 variable "hyperv_switch_name" {
