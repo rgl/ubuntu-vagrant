@@ -3,6 +3,8 @@ Vagrant.configure(2) do |config|
     lv.machine_type = 'q35'
     lv.graphics_type = 'spice'
     lv.video_type = 'qxl'
+    lv.disk_bus = 'scsi'
+    lv.disk_device = 'sda'
     lv.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
     lv.channel :type => 'spicevmc', :target_name => 'com.redhat.spice.0', :target_type => 'virtio'
   end
