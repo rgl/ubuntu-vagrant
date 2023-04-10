@@ -80,7 +80,9 @@ autoinstall:
   early-commands:
     - systemctl stop ssh # see https://bugs.launchpad.net/subiquity/+bug/1901400
   late-commands:
-    - curtin in-target -- sed -i -E 's,(GRUB_CMDLINE_LINUX_DEFAULT=).*,\1"net.ifnames=0",g' /etc/default/grub
+    # set net.ifnames=0 to disable Predictable Network Interface Names.
+    # set iscsi_auto to automatically boot from ibft.
+    - curtin in-target -- sed -i -E 's,(GRUB_CMDLINE_LINUX_DEFAULT=).*,\1"net.ifnames=0 iscsi_auto",g' /etc/default/grub
     - curtin in-target -- update-grub
     - |
       # see https://bugs.launchpad.net/subiquity/+bug/1901397
