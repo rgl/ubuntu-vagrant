@@ -104,6 +104,8 @@ Vagrant.configure(2) do |config|
     lv.cpu_mode = 'host-passthrough'
     lv.nested = true # nested virtualization.
     lv.keymap = 'pt'
+    lv.machine_virtual_size = 16 # bump the disk size to 16 GiB.
+    lv.disk_driver :discard => 'unmap', :cache => 'unsafe'
     lv.storage :file, :device => :cdrom, :bus => 'sata', :path => create_cloud_init_iso_trigger(config, 'kvm', cloud_init_user_data, cloud_init_network_config)
     # add example firmware string.
     # NB name has a maximum of 55 ascii characters.
