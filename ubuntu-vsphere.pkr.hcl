@@ -1,6 +1,6 @@
 variable "disk_size" {
   type    = string
-  default = "8192"
+  default = 8 * 1024
 }
 
 variable "version" {
