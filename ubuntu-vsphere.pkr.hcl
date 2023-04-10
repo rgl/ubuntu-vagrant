@@ -60,18 +60,11 @@ variable "vsphere_ip_wait_address" {
 }
 
 variable "vsphere_os_iso" {
-  type        = string
-  default     = env("VSPHERE_OS_ISO")
+  type    = string
+  default = env("VSPHERE_OS_ISO")
 }
 
-source "vsphere-iso" "ubuntu-amd64" {
-  CPUs     = 4
-  RAM      = 2048
-  cd_label = "cidata"
-  cd_files = [
-    "tmp/vsphere-autoinstall-cloud-init-data/user-data",
-    "autoinstall-cloud-init-data/meta-data"
-  ]
+locals {
   boot_command = [
     "e",
     "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
@@ -83,6 +76,17 @@ source "vsphere-iso" "ubuntu-amd64" {
     "<enter>",
     "<f10>",
   ]
+}
+
+source "vsphere-iso" "ubuntu-amd64" {
+  CPUs     = 4
+  RAM      = 2048
+  cd_label = "cidata"
+  cd_files = [
+    "tmp/vsphere-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data"
+  ]
+  boot_command        = local.boot_command
   boot_wait           = "5s"
   convert_to_template = true
   insecure_connection = true
@@ -126,7 +130,7 @@ build {
   }
 
   provisioner "shell" {
-    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    execute_command   = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",
@@ -141,7 +145,7 @@ build {
   }
 
   provisioner "shell" {
-    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    execute_command   = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",

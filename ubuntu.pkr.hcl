@@ -27,12 +27,7 @@ variable "vagrant_box" {
   type = string
 }
 
-source "hyperv-iso" "ubuntu-amd64" {
-  cd_label = "cidata"
-  cd_files = [
-    "tmp/hyperv-autoinstall-cloud-init-data/user-data",
-    "autoinstall-cloud-init-data/meta-data",
-  ]
+locals {
   boot_command = [
     "e",
     "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
@@ -44,6 +39,15 @@ source "hyperv-iso" "ubuntu-amd64" {
     "<enter>",
     "<f10>",
   ]
+}
+
+source "hyperv-iso" "ubuntu-amd64" {
+  cd_label = "cidata"
+  cd_files = [
+    "tmp/hyperv-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data",
+  ]
+  boot_command      = local.boot_command
   boot_wait         = "5s"
   boot_order        = ["SCSI:0:0"]
   first_boot_device = "DVD"
@@ -70,18 +74,8 @@ source "qemu" "ubuntu-amd64" {
     "autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
-  machine_type = "q35"
-  boot_command = [
-    "e",
-    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
-    "linux /casper/vmlinuz",
-    " net.ifnames=0",
-    " autoinstall",
-    "<enter>",
-    "initrd /casper/initrd",
-    "<enter>",
-    "<f10>",
-  ]
+  machine_type   = "q35"
+  boot_command   = local.boot_command
   boot_wait      = "5s"
   disk_cache     = "unsafe"
   disk_discard   = "unmap"
@@ -110,18 +104,8 @@ source "qemu" "ubuntu-uefi-amd64" {
     "tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
-  machine_type = "q35"
-  boot_command = [
-    "e",
-    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
-    "linux /casper/vmlinuz",
-    " net.ifnames=0",
-    " autoinstall",
-    "<enter>",
-    "initrd /casper/initrd",
-    "<enter>",
-    "<f10>",
-  ]
+  machine_type   = "q35"
+  boot_command   = local.boot_command
   boot_wait      = "5s"
   disk_discard   = "unmap"
   disk_interface = "virtio-scsi"
@@ -152,17 +136,7 @@ source "virtualbox-iso" "ubuntu-amd64" {
     "autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
-  boot_command = [
-    "e",
-    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
-    "linux /casper/vmlinuz",
-    " net.ifnames=0",
-    " autoinstall",
-    "<enter>",
-    "initrd /casper/initrd",
-    "<enter>",
-    "<f10>",
-  ]
+  boot_command         = local.boot_command
   boot_wait            = "5s"
   disk_size            = var.disk_size
   guest_additions_mode = "attach"
@@ -208,7 +182,7 @@ build {
   }
 
   provisioner "shell" {
-    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    execute_command   = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",
@@ -223,7 +197,7 @@ build {
   }
 
   provisioner "shell" {
-    execute_command = "sudo -S {{ .Vars }} bash {{ .Path }}"
+    execute_command   = "sudo -S {{ .Vars }} bash {{ .Path }}"
     expect_disconnect = true
     scripts = [
       "reboot.sh",
