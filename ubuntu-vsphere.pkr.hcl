@@ -66,15 +66,15 @@ variable "vsphere_os_iso" {
 
 locals {
   boot_command = [
-    "e",
-    "<leftCtrlOn>kkkkkkkkkkkkkkkkkkkk<leftCtrlOff>",
+    "c",
     "linux /casper/vmlinuz",
     " net.ifnames=0",
     " autoinstall",
     "<enter>",
     "initrd /casper/initrd",
     "<enter>",
-    "<f10>",
+    "boot",
+    "<enter>",
   ]
 }
 
