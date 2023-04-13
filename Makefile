@@ -1,7 +1,7 @@
 SHELL=bash
 .SHELLFLAGS=-euo pipefail -c
 
-VERSION=22.04
+VERSION=23.04
 
 help:
 	@echo type make build-libvirt, make build-uefi-libvirt, make build-virtualbox, make build-hyperv or make build-vsphere
@@ -14,13 +14,13 @@ build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
 ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
-	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
+	PACKER_KEY_INTERVAL=20ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh libvirt ubuntu-${VERSION}-amd64 $@
 
 ubuntu-${VERSION}-uefi-amd64-libvirt.box: tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
 	rm -f $@
-	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
+	PACKER_KEY_INTERVAL=20ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh libvirt ubuntu-${VERSION}-uefi-amd64 $@
 
@@ -49,7 +49,7 @@ tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/us
 
 ubuntu-${VERSION}-amd64-vsphere.box: tmp/vsphere-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile.template
 	rm -f $@
-	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
+	PACKER_KEY_INTERVAL=20ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
 		packer build -only=vsphere-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu-vsphere.pkr.hcl
 	rm -rf tmp/$@-contents
 	mkdir -p tmp/$@-contents
