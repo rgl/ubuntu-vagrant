@@ -85,6 +85,7 @@ network:
     ethernets:
         eth0:
             dhcp4: true
+            dhcp-identifier: mac
 EOF
 
 # reset the machine-id.
