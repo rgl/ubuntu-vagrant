@@ -1,3 +1,13 @@
+packer {
+  required_plugins {
+    # see https://github.com/hashicorp/packer-plugin-vsphere
+    vsphere = {
+      version = ">= 1.1.2"
+      source  = "github.com/hashicorp/vsphere"
+    }
+  }
+}
+
 variable "disk_size" {
   type    = string
   default = 8 * 1024

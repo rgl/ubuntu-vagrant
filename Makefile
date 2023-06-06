@@ -14,12 +14,16 @@ build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
 ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu.pkr.hcl
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh libvirt ubuntu-${VERSION}-amd64 $@
 
 ubuntu-${VERSION}-uefi-amd64-libvirt.box: tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
 	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu.pkr.hcl
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=qemu.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh libvirt ubuntu-${VERSION}-uefi-amd64 $@
@@ -30,12 +34,16 @@ tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-d
 
 ubuntu-${VERSION}-amd64-virtualbox.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu.pkr.hcl
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=virtualbox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh virtualbox ubuntu-${VERSION}-amd64 $@
 
 ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu.pkr.hcl
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_vagrant_box=$@ \
 		packer build -only=hyperv-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 	@./box-metadata.sh hyperv ubuntu-${VERSION}-amd64 $@
@@ -49,6 +57,8 @@ tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/us
 
 ubuntu-${VERSION}-amd64-vsphere.box: tmp/vsphere-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile.template
 	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu-vsphere.pkr.hcl
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
 		packer build -only=vsphere-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu-vsphere.pkr.hcl
 	rm -rf tmp/$@-contents
