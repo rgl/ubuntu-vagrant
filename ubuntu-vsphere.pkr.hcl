@@ -2,7 +2,7 @@ packer {
   required_plugins {
     # see https://github.com/hashicorp/packer-plugin-vsphere
     vsphere = {
-      version = ">= 1.1.2"
+      version = ">= 1.2.1"
       source  = "github.com/hashicorp/vsphere"
     }
   }
@@ -76,15 +76,15 @@ variable "vsphere_os_iso" {
 
 locals {
   boot_command = [
-    "c",
+    "c<wait>",
     "linux /casper/vmlinuz",
     " net.ifnames=0",
     " autoinstall",
-    "<enter>",
+    "<enter><wait5s>",
     "initrd /casper/initrd",
-    "<enter>",
+    "<enter><wait5s>",
     "boot",
-    "<enter>",
+    "<enter><wait5s>",
   ]
 }
 

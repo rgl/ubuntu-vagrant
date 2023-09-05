@@ -7,12 +7,12 @@ packer {
     }
     # see https://github.com/hashicorp/packer-plugin-hyperv
     hyperv = {
-      version = ">= 1.1.0"
+      version = ">= 1.1.1"
       source  = "github.com/hashicorp/hyperv"
     }
     # see https://github.com/hashicorp/packer-plugin-virtualbox
     virtualbox = {
-      version = ">= 1.0.4"
+      version = ">= 1.0.5"
       source  = "github.com/hashicorp/virtualbox"
     }
   }
@@ -25,12 +25,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.2-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:5e38b55d57d94ff029719342357325ed3bda38fa80054f9330dc789cd2d43931"
+  default = "sha256:a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd"
 }
 
 variable "hyperv_switch_name" {
@@ -49,15 +49,15 @@ variable "vagrant_box" {
 
 locals {
   boot_command = [
-    "c",
+    "c<wait>",
     "linux /casper/vmlinuz",
     " net.ifnames=0",
     " autoinstall",
-    "<enter>",
+    "<enter><wait5s>",
     "initrd /casper/initrd",
-    "<enter>",
+    "<enter><wait5s>",
     "boot",
-    "<enter>",
+    "<enter><wait5s>",
   ]
 }
 
