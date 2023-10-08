@@ -6,6 +6,8 @@ require 'fileutils'
 require 'stringio'
 require 'zlib'
 
+$vm_cpus = 4
+$vm_memory = 4*1024 # MB
 $provision_username = 'vagrant'
 $provision_password = 'abracadabra'
 
@@ -99,8 +101,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.provider 'libvirt' do |lv, config|
     lv.default_prefix = "#{File.basename(File.dirname(File.dirname(__FILE__)))}_"
-    lv.memory = 2048
-    lv.cpus = 2
+    lv.memory = $vm_memory
+    lv.cpus = $vm_cpus
     lv.cpu_mode = 'host-passthrough'
     lv.nested = true # nested virtualization.
     lv.keymap = 'pt'
@@ -128,8 +130,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.provider 'virtualbox' do |vb, config|
     vb.linked_clone = true
-    vb.memory = 2048
-    vb.cpus = 2
+    vb.memory = $vm_memory
+    vb.cpus = $vm_cpus
     vb.customize [
       'storageattach', :id,
       '--storagectl', 'SATA Controller',
@@ -142,8 +144,8 @@ Vagrant.configure(2) do |config|
   config.vm.provider 'hyperv' do |hv, config|
     hv.vmname = "#{File.basename(File.dirname(File.dirname(__FILE__)))}-example"
     hv.linked_clone = true
-    hv.memory = 2048
-    hv.cpus = 2
+    hv.memory = $vm_memory
+    hv.cpus = $vm_cpus
     hv.enable_virtualization_extensions = true # nested virtualization.
     hv.vlan_id = ENV['HYPERV_VLAN_ID']
     # see https://github.com/hashicorp/vagrant/issues/7915
@@ -188,8 +190,8 @@ Vagrant.configure(2) do |config|
   config.vm.provider 'vsphere' do |vsphere, override|
     vsphere.name = ENV['VSPHERE_VM_NAME']
     vsphere.notes = "Created from #{__FILE__}"
-    vsphere.cpu_count = 2
-    vsphere.memory_mb = 2*1024
+    vsphere.cpu_count = $vm_cpus
+    vsphere.memory_mb = $vm_memory
     vsphere.user = ENV['GOVC_USERNAME']
     vsphere.password = ENV['GOVC_PASSWORD']
     vsphere.insecure = true
