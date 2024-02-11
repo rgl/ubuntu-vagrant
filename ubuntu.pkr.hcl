@@ -10,11 +10,6 @@ packer {
       version = ">= 1.1.3"
       source  = "github.com/hashicorp/hyperv"
     }
-    # see https://github.com/hashicorp/packer-plugin-virtualbox
-    virtualbox = {
-      version = ">= 1.0.5"
-      source  = "github.com/hashicorp/virtualbox"
-    }
   }
 }
 
@@ -150,48 +145,11 @@ source "qemu" "ubuntu-uefi-amd64" {
   shutdown_command = "sudo -S poweroff"
 }
 
-source "virtualbox-iso" "ubuntu-amd64" {
-  cd_label = "cidata"
-  cd_files = [
-    "autoinstall-cloud-init-data/user-data",
-    "autoinstall-cloud-init-data/meta-data",
-  ]
-  boot_command         = local.boot_command
-  boot_wait            = "5s"
-  disk_size            = var.disk_size
-  guest_additions_mode = "attach"
-  guest_os_type        = "Ubuntu_64"
-  hard_drive_discard   = true
-  hard_drive_interface = "sata"
-  headless             = true
-  iso_checksum         = var.iso_checksum
-  iso_url              = var.iso_url
-  vboxmanage = [
-    ["modifyvm", "{{.Name}}", "--memory", "2048"],
-    ["modifyvm", "{{.Name}}", "--cpus", "2"],
-    ["modifyvm", "{{.Name}}", "--vram", "16"],
-    ["modifyvm", "{{.Name}}", "--audio", "none"],
-    ["modifyvm", "{{.Name}}", "--nictype1", "82540EM"],
-    ["modifyvm", "{{.Name}}", "--nictype2", "82540EM"],
-    ["modifyvm", "{{.Name}}", "--nictype3", "82540EM"],
-    ["modifyvm", "{{.Name}}", "--nictype4", "82540EM"],
-  ]
-  vboxmanage_post = [
-    ["storagectl", "{{.Name}}", "--name", "IDE Controller", "--remove"],
-  ]
-  ssh_username        = "vagrant"
-  ssh_password        = "vagrant"
-  ssh_timeout         = "60m"
-  shutdown_command    = "sudo -S poweroff"
-  post_shutdown_delay = "2m"
-}
-
 build {
   sources = [
     "source.hyperv-iso.ubuntu-amd64",
     "source.qemu.ubuntu-amd64",
     "source.qemu.ubuntu-uefi-amd64",
-    "source.virtualbox-iso.ubuntu-amd64",
   ]
 
   provisioner "shell" {
@@ -245,7 +203,6 @@ build {
   post-processor "vagrant" {
     only = [
       "qemu.ubuntu-amd64",
-      "virtualbox-iso.ubuntu-amd64",
       "hyperv-iso.ubuntu-amd64",
     ]
     output               = var.vagrant_box

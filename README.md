@@ -38,9 +38,7 @@ For more information see the [Vagrant NFS documentation](https://www.vagrantup.c
 On a Windows host, install [Chocolatey](https://chocolatey.org/install), then execute the following PowerShell commands in a Administrator PowerShell window:
 
 ```powershell
-# NB if you want to use Hyper-V see the Hyper-V section in this document
-#    and do not install virtualbox at all.
-choco install -y virtualbox --params "/NoDesktopShortcut /ExtensionPack"
+# NB if you want to use Hyper-V see the Hyper-V section in this document.
 choco install -y packer vagrant jq msys2
 ```
 
@@ -75,22 +73,6 @@ cd example
 apt-get install -y virt-manager libvirt-dev
 vagrant plugin install vagrant-libvirt
 vagrant up --provider=libvirt --no-destroy-on-error --no-tty
-vagrant ssh
-exit
-vagrant destroy -f
-```
-
-## VirtualBox usage
-
-Install [VirtuaBox](https://www.virtualbox.org/).
-
-Type `make build-virtualbox` and follow the instructions.
-
-Try the example guest:
-
-```bash
-cd example
-vagrant up --provider=virtualbox --no-destroy-on-error --no-tty
 vagrant ssh
 exit
 vagrant destroy -f
