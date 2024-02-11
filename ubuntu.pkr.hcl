@@ -10,6 +10,11 @@ packer {
       version = ">= 1.1.3"
       source  = "github.com/hashicorp/hyperv"
     }
+    # see https://github.com/hashicorp/packer-plugin-vagrant
+    vagrant = {
+      version = ">= 1.1.2"
+      source = "github.com/hashicorp/vagrant"
+    }
   }
 }
 
