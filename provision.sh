@@ -122,16 +122,18 @@ apt-get -y clean
 # NB prefer discard/trim (safer; faster) over creating a big zero filled file
 #    (somewhat unsafe as it has to fill the entire disk, which might trigger
 #    a disk (near) full alarm; slower; slightly better compression).
-root_dev="$(findmnt -no SOURCE /)"
-if [ "$(lsblk -no DISC-GRAN $root_dev | awk '{print $1}')" != '0B' ]; then
+if [ "$(lsblk -no DISC-GRAN $(findmnt -no SOURCE /) | awk '{print $1}')" != '0B' ]; then
     while true; do
         output="$(fstrim -v /)"
         cat <<<"$output"
-        sync && sync && sync && blockdev --flushbufs $root_dev && sleep 15
-        if [ "$output" == '/: 0 B (0 bytes) trimmed' ]; then
+        sync && sync && sleep 15
+        bytes_trimmed="$(echo "$output" | perl -n -e '/\((\d+) bytes\)/ && print $1')"
+        # NB if this never reaches zero, it might be because there is not
+        #    enough free space for completing the trim.
+        if (( bytes_trimmed < $((200*1024*1024)) )); then # < 200 MiB is good enough.
             break
         fi
     done
 else
-    dd if=/dev/zero of=/EMPTY bs=1M || true; rm -f /EMPTY
+    dd if=/dev/zero of=/EMPTY bs=1M || true && sync && rm -f /EMPTY
 fi
