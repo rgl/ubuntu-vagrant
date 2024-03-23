@@ -3,6 +3,7 @@
 # see https://ubuntu.com/server/docs/install/autoinstall-reference
 # see https://ubuntu.com/server/docs/install/autoinstall-schema
 # see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
+# see https://cloudinit.readthedocs.io/en/latest/reference/examples.html
 # see https://curtin.readthedocs.io/en/latest/topics/storage.html
 # see https://curtin.readthedocs.io/
 # see /autoinstall.yaml
@@ -13,6 +14,17 @@
 # see /run/cloud-init/instance-data.json
 # see /etc/cloud/cloud.cfg.d/
 # see cloud-init query --all
+write_files:
+  - path: /autoinstall-fix-uefi-boot.sh
+    content: |
+      #!/bin/bash
+      set -euxo pipefail
+      # see https://bugs.launchpad.net/subiquity/+bug/1901397
+      if [ -d /sys/firmware/efi ]; then
+        apt-get install -y efibootmgr
+        efibootmgr -o $(efibootmgr | perl -n -e '/Boot(.+)\* ubuntu/ && print $1')
+      fi
+    permissions: '0755'
 snippets:
   storage-config-msdos: &storage-config-msdos
     - id: disk-boot
@@ -84,12 +96,7 @@ autoinstall:
     # set iscsi_auto to automatically boot from ibft.
     - curtin in-target -- sed -i -E 's,(GRUB_CMDLINE_LINUX_DEFAULT=).*,\1"net.ifnames=0 iscsi_auto",g' /etc/default/grub
     - curtin in-target -- update-grub
-    - |
-      # see https://bugs.launchpad.net/subiquity/+bug/1901397
-      if [ -d /sys/firmware/efi ]; then
-        apt-get install -y efibootmgr
-        efibootmgr -o $(efibootmgr | perl -n -e '/Boot(.+)\* ubuntu/ && print $1')
-      fi
+    - /autoinstall-fix-uefi-boot.sh
   identity:
     hostname: vagrant
     username: vagrant
