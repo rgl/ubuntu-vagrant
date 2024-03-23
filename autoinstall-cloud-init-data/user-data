@@ -22,7 +22,8 @@ write_files:
       # see https://bugs.launchpad.net/subiquity/+bug/1901397
       if [ -d /sys/firmware/efi ]; then
         apt-get install -y efibootmgr
-        efibootmgr -o $(efibootmgr | perl -n -e '/Boot(.+)\* ubuntu/ && print $1')
+        ubuntu_boot_option="$(efibootmgr | perl -ne '/^Boot(\d+)\* Ubuntu/i && print $1')"
+        efibootmgr -o "$ubuntu_boot_option"
       fi
     permissions: '0755'
 snippets:
