@@ -1,8 +1,11 @@
 #!/bin/bash
 set -euxo pipefail
 
+# TODO drop this instead? as it does not seem to be used anymore?
 # wait for cloud-init to finish.
-cloud-init status --long --wait
+if [ "$(cloud-init status | perl -ne '/^status: (.+)/ && print $1')" != 'disabled' ]; then
+    cloud-init status --long --wait
+fi
 
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically added the vagrant user into the sudo group.

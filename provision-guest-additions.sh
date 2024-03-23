@@ -1,8 +1,11 @@
 #!/bin/bash
 set -euxo pipefail
 
+# TODO drop this instead? as it does not seem to be used anymore?
 # wait for cloud-init to finish.
-cloud-init status --long --wait
+if [ "$(cloud-init status | perl -ne '/^status: (.+)/ && print $1')" != 'disabled' ]; then
+    cloud-init status --long --wait
+fi
 
 # install the Guest Additions.
 if [ -n "$(lspci | grep 'Red Hat' | head -1)" ]; then
