@@ -78,6 +78,28 @@ exit
 vagrant destroy -f
 ```
 
+## Proxmox usage
+
+Set the Proxmox VE details:
+
+```bash
+cat >secrets-proxmox.sh <<EOF
+export PROXMOX_URL='https://192.168.1.21:8006/api2/json'
+export PROXMOX_USERNAME='root@pam'
+export PROXMOX_PASSWORD='vagrant'
+export PROXMOX_NODE='pve'
+EOF
+source secrets-proxmox.sh
+```
+
+Create the template:
+
+```bash
+make build-proxmox
+```
+
+**NB** There is no way to use the created template with vagrant (the [vagrant-proxmox plugin](https://github.com/telcat/vagrant-proxmox) is no longer compatible with recent vagrant versions). Instead, use packer (e.g. see this repository) or terraform (e.g. see [rgl/terraform-proxmox-ubuntu-example](https://github.com/rgl/terraform-proxmox-ubuntu-example)).
+
 ## Hyper-V usage
 
 Install [Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v)

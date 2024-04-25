@@ -4,10 +4,11 @@ SHELL=bash
 VERSION=22.04
 
 help:
-	@echo type make build-libvirt, make build-uefi-libvirt, make build-hyperv or make build-vsphere
+	@echo type make build-libvirt, make build-uefi-libvirt, make build-proxmox, make build-hyperv or make build-vsphere
 
 build-libvirt: ubuntu-${VERSION}-amd64-libvirt.box
 build-uefi-libvirt: ubuntu-${VERSION}-uefi-amd64-libvirt.box
+build-proxmox: ubuntu-${VERSION}-amd64-proxmox.box
 build-hyperv: ubuntu-${VERSION}-amd64-hyperv.box
 build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
@@ -30,6 +31,19 @@ ubuntu-${VERSION}-uefi-amd64-libvirt.box: tmp/libvirt-uefi-autoinstall-cloud-ini
 tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< >$@
+
+ubuntu-${VERSION}-amd64-proxmox.box: tmp/proxmox-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl
+	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu.pkr.hcl
+	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} PKR_VAR_vagrant_box=$@ \
+		packer build -only=proxmox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
+
+tmp/proxmox-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+	mkdir -p $(shell dirname $@)
+	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< \
+		| sed -E 's,((\s+)packages:),\1\n\2  - qemu-guest-agent,g' \
+		>$@
 
 ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
@@ -65,4 +79,4 @@ tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/u
 	mkdir -p $(shell dirname $@)
 	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
 
-.PHONY: help build-libvirt build-uefi-libvirt build-hyperv build-vsphere
+.PHONY: help build-libvirt build-uefi-libvirt build-proxmox build-hyperv build-vsphere

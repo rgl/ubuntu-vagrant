@@ -18,6 +18,10 @@ packer {
   }
 }
 
+variable "version" {
+  type = string
+}
+
 variable "disk_size" {
   type    = string
   default = 8 * 1024
@@ -31,6 +35,11 @@ variable "iso_url" {
 variable "iso_checksum" {
   type    = string
   default = "sha256:45f873de9f8cb637345d6e66a583762730bbea30277ef7b32c9c3bd6700a32b2"
+}
+
+variable "proxmox_node" {
+  type    = string
+  default = env("PROXMOX_NODE")
 }
 
 variable "hyperv_switch_name" {
@@ -150,11 +159,64 @@ source "qemu" "ubuntu-uefi-amd64" {
   shutdown_command = "sudo -S poweroff"
 }
 
+source "proxmox-iso" "ubuntu-amd64" {
+  template_name            = "template-ubuntu-${var.version}"
+  template_description     = "See https://github.com/rgl/ubuntu-vagrant"
+  tags                     = "ubuntu-${var.version};template"
+  insecure_skip_tls_verify = true
+  node                     = var.proxmox_node
+  machine                  = "q35"
+  boot_command             = local.boot_command
+  boot_wait                = "5s"
+  bios                     = "ovmf"
+  efi_config {
+    efi_storage_pool = "local-lvm"
+  }
+  cpu_type = "host"
+  cores    = 2
+  memory   = 2 * 1024
+  vga {
+    type   = "qxl"
+    memory = 16
+  }
+  network_adapters {
+    model  = "virtio"
+    bridge = "vmbr0"
+  }
+  scsi_controller = "virtio-scsi-single"
+  disks {
+    type         = "scsi"
+    io_thread    = true
+    ssd          = true
+    discard      = true
+    disk_size    = "${var.disk_size}M"
+    storage_pool = "local-lvm"
+  }
+  iso_storage_pool = "local"
+  iso_url          = var.iso_url
+  iso_checksum     = var.iso_checksum
+  unmount_iso      = true
+  additional_iso_files {
+    iso_storage_pool = "local"
+    cd_label         = "cidata"
+    cd_files = [
+      "tmp/proxmox-autoinstall-cloud-init-data/user-data",
+      "autoinstall-cloud-init-data/meta-data",
+    ]
+    unmount = true
+  }
+  os           = "l26"
+  ssh_username = "vagrant"
+  ssh_password = "vagrant"
+  ssh_timeout  = "60m"
+}
+
 build {
   sources = [
     "source.hyperv-iso.ubuntu-amd64",
     "source.qemu.ubuntu-amd64",
     "source.qemu.ubuntu-uefi-amd64",
+    "source.proxmox-iso.ubuntu-amd64",
   ]
 
   provisioner "shell" {
