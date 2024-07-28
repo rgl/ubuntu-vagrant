@@ -121,7 +121,7 @@ PowerShell -Command 'Set-NetFirewallProfile -DisabledInterfaceAliases (Get-NetAd
 Create the base image in a bash shell with Administrative privileges:
 
 ```bash
-cat >secrets-hyperv.sh <<EOF
+cat >secrets-hyperv.sh <<'EOF'
 # set this value when you need to set the VM Switch Name.
 export HYPERV_SWITCH_NAME='Default Switch'
 # set this value when you need to set the VM VLAN ID.
