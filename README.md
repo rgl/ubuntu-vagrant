@@ -125,7 +125,7 @@ cat >secrets-hyperv.sh <<'EOF'
 # set this value when you need to set the VM Switch Name.
 export HYPERV_SWITCH_NAME='Default Switch'
 # set this value when you need to set the VM VLAN ID.
-export HYPERV_VLAN_ID=''
+#export HYPERV_VLAN_ID=''
 # set the credentials that the guest will use
 # to connect to this host smb share.
 # NB you should create a new local user named _vagrant_share
