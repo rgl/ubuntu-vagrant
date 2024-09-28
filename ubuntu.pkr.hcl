@@ -5,6 +5,11 @@ packer {
       version = ">= 1.1.0"
       source  = "github.com/hashicorp/qemu"
     }
+    # see https://github.com/hashicorp/packer-plugin-proxmox
+    proxmox = {
+      version = ">= 1.2.0"
+      source  = "github.com/hashicorp/proxmox"
+    }
     # see https://github.com/hashicorp/packer-plugin-hyperv
     hyperv = {
       version = ">= 1.1.3"
@@ -191,12 +196,18 @@ source "proxmox-iso" "ubuntu-amd64" {
     discard      = true
     disk_size    = "${var.disk_size}M"
     storage_pool = "local-lvm"
+    format       = "raw"
   }
-  iso_storage_pool = "local"
-  iso_url          = var.iso_url
-  iso_checksum     = var.iso_checksum
-  unmount_iso      = true
+  boot_iso {
+    type             = "scsi"
+    iso_storage_pool = "local"
+    iso_url          = var.iso_url
+    iso_checksum     = var.iso_checksum
+    iso_download_pve = true
+    unmount          = true
+  }
   additional_iso_files {
+    type             = "scsi"
     iso_storage_pool = "local"
     cd_label         = "cidata"
     cd_files = [
