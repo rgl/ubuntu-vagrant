@@ -24,7 +24,7 @@ end
 # NB libvirtd libvirt-qemu:kvm MUST have read permissions to the iso file path.
 # see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 def create_cloud_init_iso(cloud_init_data_path, env, config, group, cloud_init_user_data, cloud_init_network_config)
-  if !File.exists?(cloud_init_data_path) || File.mtime(cloud_init_data_path) < File.mtime(__FILE__)
+  if !File.exist?(cloud_init_data_path) || File.mtime(cloud_init_data_path) < File.mtime(__FILE__)
     cloud_init_data_parent_path = File.dirname(cloud_init_data_path)
     FileUtils.mkdir_p(cloud_init_data_parent_path, :mode => 0750)
     FileUtils.chown(nil, group, cloud_init_data_parent_path) if group
