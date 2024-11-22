@@ -2,22 +2,22 @@ packer {
   required_plugins {
     # see https://github.com/hashicorp/packer-plugin-qemu
     qemu = {
-      version = ">= 1.1.0"
+      version = "1.1.0"
       source  = "github.com/hashicorp/qemu"
     }
     # see https://github.com/hashicorp/packer-plugin-proxmox
     proxmox = {
-      version = ">= 1.2.0"
+      version = "1.2.0"
       source  = "github.com/hashicorp/proxmox"
     }
     # see https://github.com/hashicorp/packer-plugin-hyperv
     hyperv = {
-      version = ">= 1.1.3"
+      version = "1.1.3"
       source  = "github.com/hashicorp/hyperv"
     }
     # see https://github.com/hashicorp/packer-plugin-vagrant
     vagrant = {
-      version = ">= 1.1.5"
+      version = "1.1.5"
       source  = "github.com/hashicorp/vagrant"
     }
   }
