@@ -166,7 +166,13 @@ source "qemu" "ubuntu-uefi-amd64" {
 
 source "proxmox-iso" "ubuntu-amd64" {
   template_name            = "template-ubuntu-${var.version}"
-  template_description     = "See https://github.com/rgl/ubuntu-vagrant"
+  template_description     = <<-EOS
+                              See https://github.com/rgl/ubuntu-vagrant
+
+                              ```
+                              Build At: ${timestamp()}
+                              ```
+                              EOS
   tags                     = "ubuntu-${var.version};template"
   insecure_skip_tls_verify = true
   node                     = var.proxmox_node
