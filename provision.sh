@@ -79,12 +79,14 @@ echo 'GenerateName=yes' >/etc/iscsi/initiatorname.iscsi
 
 # reset cloud-init.
 cloud-init clean --logs --seed
+install -m 600 /dev/null /etc/netplan/50-cloud-init.yaml
 cat >/etc/netplan/50-cloud-init.yaml <<'EOF'
 network:
     version: 2
     ethernets:
         eth0:
             dhcp4: true
+            dhcp-identifier: mac
 EOF
 
 # reset the machine-id.

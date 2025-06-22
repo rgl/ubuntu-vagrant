@@ -84,6 +84,12 @@ snippets:
       path: /boot/efi
 autoinstall:
   version: 1
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp-identifier: mac
   refresh-installer:
     update: true
   apt:
