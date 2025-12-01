@@ -29,6 +29,7 @@ def create_cloud_init_iso(cloud_init_data_path, env, config, group, cloud_init_u
     FileUtils.mkdir_p(cloud_init_data_parent_path, :mode => 0750)
     FileUtils.chown(nil, group, cloud_init_data_parent_path) if group
     FileUtils.rm_f(cloud_init_data_path)
+    FileUtils.rm_rf('tmp/cidata')
     FileUtils.mkdir_p('tmp/cidata')
     File.write('tmp/cidata/meta-data', '{}')
     File.write('tmp/cidata/user-data', "#cloud-config\n#{cloud_init_user_data.to_json}")
