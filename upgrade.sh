@@ -2,7 +2,9 @@
 set -euxo pipefail
 
 # wait for cloud-init to finish.
-cloud-init status --long --wait
+if [ "$(cloud-init status | perl -ne '/^status: (.+)/ && print $1')" != 'disabled' ]; then
+    cloud-init status --long --wait
+fi
 
 # let the sudo group members use root permissions without a password.
 # NB d-i automatically added the vagrant user into the sudo group.

@@ -1,7 +1,7 @@
 SHELL=bash
 .SHELLFLAGS=-euo pipefail -c
 
-VERSION=22.04
+VERSION=24.04
 
 help:
 	@echo type make build-libvirt, make build-uefi-libvirt, make build-proxmox, make build-hyperv or make build-vsphere

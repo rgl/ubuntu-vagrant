@@ -7,7 +7,8 @@
 # see https://curtin.readthedocs.io/en/latest/topics/storage.html
 # see https://curtin.readthedocs.io/
 # see /autoinstall.yaml
-# see /var/log/installer/subiquity-debug.log
+# see /var/log/installer/subiquity-server-debug.log
+# see /var/log/installer/subiquity-client-debug.log
 # see /var/log/installer/autoinstall-user-data
 # see /var/log/cloud-init.log
 # see /var/log/cloud-init-output.log
