@@ -138,22 +138,24 @@ source "qemu" "ubuntu-uefi-amd64" {
     "tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
-  machine_type   = "q35"
-  boot_command   = local.boot_command
-  boot_wait      = "5s"
-  disk_discard   = "unmap"
-  disk_interface = "virtio-scsi"
-  disk_size      = var.disk_size
-  format         = "qcow2"
-  headless       = true
-  net_device     = "virtio-net"
-  iso_checksum   = var.iso_checksum
-  iso_url        = var.iso_url
-  cpus           = 2
-  memory         = 2048
+  machine_type      = "q35"
+  efi_boot          = true
+  efi_firmware_code = "/usr/share/OVMF/OVMF_CODE_4M.fd"
+  efi_firmware_vars = "/usr/share/OVMF/OVMF_VARS_4M.fd"
+  boot_command      = local.boot_command
+  boot_wait         = "5s"
+  disk_discard      = "unmap"
+  disk_interface    = "virtio-scsi"
+  disk_size         = var.disk_size
+  format            = "qcow2"
+  headless          = true
+  net_device        = "virtio-net"
+  iso_checksum      = var.iso_checksum
+  iso_url           = var.iso_url
+  cpus              = 2
+  memory            = 2048
   qemuargs = [
     ["-cpu", "host"],
-    ["-bios", "/usr/share/ovmf/OVMF.fd"],
     ["-device", "virtio-vga"],
     ["-device", "virtio-scsi-pci,id=scsi0"],
     ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
