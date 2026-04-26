@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-# wait for cloud-init to finish.
-if [ "$(cloud-init status | perl -ne '/^status: (.+)/ && print $1')" != 'disabled' ]; then
-    cloud-init status --long --wait
-fi
-
 # install the vagrant public key.
 # NB vagrant will replace it on the first run.
 install -d -m 700 /home/vagrant/.ssh
@@ -103,12 +98,12 @@ rm -f /var/lib/dbus/machine-id
 # reset the random-seed.
 # NB systemd-random-seed re-generates it on every boot and shutdown.
 # NB you can prove that random-seed file does not exist on the image with:
-#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-24.04-amd64/0/libvirt/box.img
-#       sudo mkdir /mnt/ubuntu-24.04-amd64
-#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-24.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt/ubuntu-24.04-amd64
-#       sudo bash -c 'unmkinitramfs /mnt/ubuntu-24.04-amd64/boot/initrd.img /tmp/ubuntu-24.04-amd64-initrd' # NB prefer unmkinitramfs over cpio.
-#       sudo ls -laF /mnt/ubuntu-24.04-amd64/var/lib/systemd
-#       sudo guestunmount /mnt/ubuntu-24.04-amd64
+#       sudo virt-filesystems -a ~/.vagrant.d/boxes/ubuntu-26.04-amd64/0/libvirt/box.img
+#       sudo mkdir /mnt/ubuntu-26.04-amd64
+#       sudo guestmount -a ~/.vagrant.d/boxes/ubuntu-26.04-amd64/0/libvirt/box.img -m /dev/sda1 --pid-file guestmount.pid --ro /mnt/ubuntu-26.04-amd64
+#       sudo bash -c 'unmkinitramfs /mnt/ubuntu-26.04-amd64/boot/initrd.img /tmp/ubuntu-26.04-amd64-initrd' # NB prefer unmkinitramfs over cpio.
+#       sudo ls -laF /mnt/ubuntu-26.04-amd64/var/lib/systemd
+#       sudo guestunmount /mnt/ubuntu-26.04-amd64
 #       sudo bash -c 'while kill -0 $(cat guestmount.pid) 2>/dev/null; do sleep .1; done; rm guestmount.pid' # wait for guestmount to finish.
 # see https://www.freedesktop.org/software/systemd/man/systemd-random-seed.service.html
 # see https://manpages.ubuntu.com/manpages/bionic/man4/random.4.html

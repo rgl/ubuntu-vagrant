@@ -6,6 +6,9 @@
 # see https://cloudinit.readthedocs.io/en/latest/reference/examples.html
 # see https://curtin.readthedocs.io/en/latest/topics/storage.html
 # see https://curtin.readthedocs.io/
+# see https://github.com/canonical/curtin
+# see https://github.com/canonical/subiquity
+# see https://github.com/canonical/cloud-init
 # see /autoinstall.yaml
 # see /var/log/installer/subiquity-server-debug.log
 # see /var/log/installer/subiquity-client-debug.log

@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-# wait for cloud-init to finish.
-if [ "$(cloud-init status | perl -ne '/^status: (.+)/ && print $1')" != 'disabled' ]; then
-    cloud-init status --long --wait
-fi
-
 # install the Guest Additions.
 if [ -n "$(lspci | grep 'Red Hat' | head -1)" ]; then
 # install the qemu-kvm Guest Additions.

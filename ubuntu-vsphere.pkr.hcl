@@ -90,7 +90,7 @@ locals {
 
 source "vsphere-iso" "ubuntu-amd64" {
   CPUs     = 4
-  RAM      = 2048
+  RAM      = 4 * 1024
   cd_label = "cidata"
   cd_files = [
     "tmp/vsphere-autoinstall-cloud-init-data/user-data",

@@ -34,12 +34,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/24.04/ubuntu-24.04.4-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/26.04/ubuntu-26.04-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:e907d92eeec9df64163a7e454cbc8d7755e8ddc7ed42f99dbc80c40f1a138433"
+  default = "sha256:dec49008a71f6098d0bcfc822021f4d042d5f2db279e4d75bdd981304f1ca5d9"
 }
 
 variable "proxmox_node" {
@@ -86,7 +86,7 @@ source "hyperv-iso" "ubuntu-amd64" {
   boot_order        = ["SCSI:0:0"]
   first_boot_device = "DVD"
   cpus              = 2
-  memory            = 2048
+  memory            = 4 * 1024
   disk_size         = var.disk_size
   generation        = 2
   headless          = true
@@ -121,7 +121,7 @@ source "qemu" "ubuntu-amd64" {
   iso_checksum   = var.iso_checksum
   iso_url        = var.iso_url
   cpus           = 2
-  memory         = 2048
+  memory         = 4 * 1024
   qemuargs = [
     ["-cpu", "host"],
   ]
@@ -153,7 +153,7 @@ source "qemu" "ubuntu-uefi-amd64" {
   iso_checksum      = var.iso_checksum
   iso_url           = var.iso_url
   cpus              = 2
-  memory            = 2048
+  memory            = 4 * 1024
   qemuargs = [
     ["-cpu", "host"],
     ["-device", "virtio-vga"],
@@ -187,7 +187,7 @@ source "proxmox-iso" "ubuntu-amd64" {
   }
   cpu_type = "host"
   cores    = 2
-  memory   = 2 * 1024
+  memory   = 4 * 1024
   vga {
     type   = "qxl"
     memory = 16
