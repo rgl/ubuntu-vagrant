@@ -23,6 +23,20 @@ elif [ "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" == 'Microsoft Corporation
 # see https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1766857
 install -d /usr/libexec
 ln -s /usr/sbin /usr/libexec/hypervkvpd
+# configure sshd to also listen in a hyper-v vmbus socket (aka vsock).
+# NB use ss -l --vsock --processes to list these types of listening sockets.
+# NB systemd 256 introduced systemd-ssh-generator, but only in systemd 260
+#    it fixed the vsock detection.
+#    see https://github.com/systemd/systemd/pull/40557
+#    see https://www.freedesktop.org/software/systemd/man/latest/systemd-ssh-generator.html
+# NB systemctl --version shows something like systemd 255 (255.4-1ubuntu8.15).
+if [ "$(systemctl --version | head -1 | awk '{print $2}')" -lt 260 ]; then
+    install -d /etc/systemd/system/ssh.socket.d
+    cat >/etc/systemd/system/ssh.socket.d/vsock.conf <<'EOF'
+[Socket]
+ListenStream=vsock::22
+EOF
+fi
 exit 0
 else
 echo 'ERROR: Unknown VM host.'
