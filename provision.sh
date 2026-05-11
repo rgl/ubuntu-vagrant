@@ -126,7 +126,7 @@ apt-get -y clean
 # NB prefer discard/trim (safer; faster) over creating a big zero filled file
 #    (somewhat unsafe as it has to fill the entire disk, which might trigger
 #    a disk (near) full alarm; slower; slightly better compression).
-if [ "$(lsblk -no DISC-GRAN $(findmnt -no SOURCE /) | awk '{print $1}')" != '0B' ]; then
+if [ "$(lsblk -no DISC-GRAN "$(findmnt -no SOURCE /)" | awk '{print $1}')" != '0B' ]; then
     while true; do
         output="$(fstrim -v /)"
         cat <<<"$output"

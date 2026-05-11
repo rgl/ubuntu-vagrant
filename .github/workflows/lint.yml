@@ -1,0 +1,11 @@
+name: Lint
+on:
+  - push
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Lint
+        run: ./mega-linter.sh

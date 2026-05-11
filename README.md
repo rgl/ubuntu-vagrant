@@ -1,12 +1,34 @@
+# About
+
+[![Lint](https://github.com/rgl/ubuntu-vagrant/actions/workflows/lint.yml/badge.svg)](https://github.com/rgl/ubuntu-vagrant/actions/workflows/lint.yml)
+
 This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso To Vagrant Box](http://blog.ruilopes.com/from-iso-to-vagrant-box.html) article.
 
 Currently this targets [Ubuntu 24.04 (Noble Numbat)](https://wiki.ubuntu.com/NobleNumbat/ReleaseNotes).
 
 Other Ubuntu versions might be available in a [separate branch](https://github.com/rgl/ubuntu-vagrant/branches).
 
-# Usage
+## Usage
 
 Install Packer 1.14+ and Vagrant 2.4+.
+
+Depending on your host, follow its instructions:
+
+* [Ubuntu Host](#ubuntu-host)
+* [Windows Host](#windows-host)
+
+Depending on your hypervisor, follow its instructions:
+
+* [QEMU-KVM usage](#qemu-kvm-usage)
+* [Proxmox VE usage](#proxmox-ve-usage)
+* [Hyper-V usage](#hyper-v-usage)
+* [VMware vSphere usage](#vmware-vsphere-usage)
+
+Lint the the source-code:
+
+```bash
+./mega-linter.sh
+```
 
 List this repository dependencies (and which have newer versions):
 
@@ -15,11 +37,11 @@ export GITHUB_COM_TOKEN='YOUR_GITHUB_PERSONAL_TOKEN'
 ./renovate.sh
 ```
 
-## Ubuntu Host
+### Ubuntu Host
 
 On a Ubuntu host, install the dependencies by running the file at:
 
-    https://github.com/rgl/xfce-desktop-vagrant/blob/master/provision-virtualization-tools.sh
+<https://github.com/rgl/xfce-desktop-vagrant/blob/master/provision-virtualization-tools.sh>
 
 And you should also install and configure the NFS server. E.g.:
 
@@ -40,7 +62,7 @@ EOF
 
 For more information see the [Vagrant NFS documentation](https://www.vagrantup.com/docs/synced-folders/nfs.html).
 
-## Windows Host
+### Windows Host
 
 On a Windows host, install [Chocolatey](https://chocolatey.org/install), then execute the following PowerShell commands in a Administrator PowerShell window:
 
@@ -61,7 +83,7 @@ exit
 
 **NB** The commands described in this README should be executed in a mingw64 bash shell.
 
-## qemu-kvm usage
+### qemu-kvm usage
 
 Install qemu-kvm:
 
@@ -85,7 +107,7 @@ exit
 vagrant destroy -f
 ```
 
-## Proxmox usage
+### Proxmox VE usage
 
 Set the Proxmox VE details:
 
@@ -107,7 +129,7 @@ make build-proxmox
 
 **NB** There is no way to use the created template with vagrant (the [vagrant-proxmox plugin](https://github.com/telcat/vagrant-proxmox) is no longer compatible with recent vagrant versions). Instead, use packer (e.g. see this repository) or terraform (e.g. see [rgl/terraform-proxmox-ubuntu-example](https://github.com/rgl/terraform-proxmox-ubuntu-example)).
 
-## Hyper-V usage
+### Hyper-V usage
 
 Install [Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v)
 and also install the `Windows Sandbox` feature (for some reason,
@@ -168,7 +190,7 @@ exit
 vagrant destroy -f
 ```
 
-## VMware vSphere usage
+### VMware vSphere usage
 
 Download [govc](https://github.com/vmware/govmomi/releases/latest) and place it inside your `/usr/local/bin` directory.
 
