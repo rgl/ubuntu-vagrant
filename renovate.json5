@@ -1,0 +1,32 @@
+// see https://docs.renovatebot.com/templates/
+// see https://docs.renovatebot.com/modules/manager/
+// see https://docs.renovatebot.com/modules/manager/regex/
+// see https://docs.renovatebot.com/configuration-options/
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "regexManagers": [
+    // packer plugins.
+    {
+      fileMatch: [
+        "\\.pkr\\.hcl$",
+      ],
+      matchStrings: [
+        "version\\s+=\\s+\"(?<currentValue>.+?)\"\\s+source\\s+=\\s+\"github.com/(?<depName>.+?)\"",
+      ],
+      datasourceTemplate: "github-tags",
+      depNameTemplate: "{{{replace '(.+)/(.+)' '$1/packer-plugin-$2' depName}}}",
+    },
+    // default datasources.
+    {
+      "fileMatch": [
+        "\\.ya?ml$",
+        "\\.sh$",
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[^:]+?) depName=(?<depName>.+?)( versioning=(?<versioning>.+?))?( extractVersion=(?<extractVersion>.+?))?( registryUrl=(?<registryUrl>.+?))?\\s.+?[:=]\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}",
+      "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{else}}^v?(?<version>.+)${{/if}}"
+    },
+  ]
+}

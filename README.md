@@ -8,6 +8,13 @@ Other Ubuntu versions might be available in a [separate branch](https://github.c
 
 Install Packer 1.14+ and Vagrant 2.4+.
 
+List this repository dependencies (and which have newer versions):
+
+```bash
+export GITHUB_COM_TOKEN='YOUR_GITHUB_PERSONAL_TOKEN'
+./renovate.sh
+```
+
 ## Ubuntu Host
 
 On a Ubuntu host, install the dependencies by running the file at:
