@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-image_name='oxsecurity/megalinter'
-# see https://hub.docker.com/r/oxsecurity/megalinter/tags
-# renovate: datasource=docker depName=oxsecurity/megalinter
-image_version='9.4.0'
+image_name='ghcr.io/oxsecurity/megalinter'
+# see https://github.com/oxsecurity/megalinter/pkgs/container/megalinter/versions?filters%5Bversion_type%5D=tagged
+# renovate: datasource=github-releases depName=oxsecurity/megalinter
+image_version='9.5.0'
 
 # see https://megalinter.io/latest/configuration/
 # see https://megalinter.io/latest/descriptors/powershell/
