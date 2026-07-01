@@ -1,7 +1,7 @@
 #cloud-config
-# see https://ubuntu.com/server/docs/install/autoinstall
-# see https://ubuntu.com/server/docs/install/autoinstall-reference
-# see https://ubuntu.com/server/docs/install/autoinstall-schema
+# see https://canonical-subiquity.readthedocs-hosted.com/en/latest/intro-to-autoinstall.html
+# see https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+# see https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-schema.html
 # see https://docs.cloud-init.io/en/26.1/reference/datasources/nocloud.html
 # see https://docs.cloud-init.io/en/26.1/reference/datasources/configdrive.html
 # see https://docs.cloud-init.io/en/26.1/reference/datasources/vmware.html
