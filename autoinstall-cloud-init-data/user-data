@@ -2,8 +2,10 @@
 # see https://ubuntu.com/server/docs/install/autoinstall
 # see https://ubuntu.com/server/docs/install/autoinstall-reference
 # see https://ubuntu.com/server/docs/install/autoinstall-schema
-# see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
-# see https://cloudinit.readthedocs.io/en/latest/reference/examples.html
+# see https://docs.cloud-init.io/en/26.1/reference/datasources/nocloud.html
+# see https://docs.cloud-init.io/en/26.1/reference/datasources/configdrive.html
+# see https://docs.cloud-init.io/en/26.1/reference/datasources/vmware.html
+# see https://docs.cloud-init.io/en/26.1/reference/examples.html
 # see https://curtin.readthedocs.io/en/latest/topics/storage.html
 # see https://curtin.readthedocs.io/
 # see https://github.com/canonical/curtin
