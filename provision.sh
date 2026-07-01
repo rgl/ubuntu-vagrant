@@ -9,25 +9,6 @@ wget -qOauthorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/mast
 chmod 600 authorized_keys
 chown -R vagrant:vagrant .
 
-# add additional cloud-init data sources.
-if [ -n "$(lspci | grep VMware | head -1)" ]; then
-# only install when the current cloud-init does not have the VMware datasource.
-if [ ! -f /usr/lib/python3/dist-packages/cloudinit/sources/DataSourceVMware.py ]; then
-# add support for the vmware vmx guestinfo cloud-init datasource.
-# NB there is plans to include this datasource in the upstream cloud-init project at
-#    https://github.com/vmware/cloud-init-vmware-guestinfo/issues/2 but in the meantime
-#    we are really installing from an internet pipe.
-# see https://github.com/vmware/cloud-init-vmware-guestinfo
-apt-get install -y --no-install-recommends curl
-apt-get install -y --no-install-recommends python3-pip
-export GIT_REF='v1.4.1'
-wget -qO- https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/$GIT_REF/install.sh \
-    | bash -x -
-unset GIT_REF
-apt-get remove -y --purge curl
-fi
-fi
-
 # only enable the supported cloud-init datasources.
 # NB this is especially required for not waiting for datasources that try to
 #    contact the metadata service at http://169.254.169.254 (like the AWS

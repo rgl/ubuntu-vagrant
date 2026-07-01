@@ -192,9 +192,10 @@ Vagrant.configure(2) do |config|
     vsphere.vm_base_path = ENV['VSPHERE_VM_FOLDER']
     vsphere.vlan = ENV['VSPHERE_VLAN']
     # NB the extra_config data ends-up inside the VM .vmx file.
-    # NB the guestinfo properties will be exposed by cloud-init-vmware-guestinfo
-    #    as a cloud-init datasource.
-    # See https://github.com/vmware/cloud-init-vmware-guestinfo
+    # NB the guestinfo properties are used by the VMware cloud-init datasource.
+    # see https://docs.cloud-init.io/en/26.1/reference/datasources/vmware.html
+    # see https://github.com/canonical/cloud-init/blob/26.1/cloudinit/sources/DataSourceVMware.py
+    # see /usr/lib/python3/dist-packages/cloudinit/sources/DataSourceVMware.py
     vsphere.extra_config = {
       'guestinfo.metadata' => gzip_base64({
         'network' => gzip_base64(cloud_init_network_config.to_json),
