@@ -39,6 +39,7 @@ ubuntu-${VERSION}-amd64-proxmox.box: tmp/proxmox-autoinstall-cloud-init-data/use
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} PKR_VAR_vagrant_box=$@ \
 		packer build -only=proxmox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 
+# see https://packages.ubuntu.com/resolute/qemu-guest-agent
 tmp/proxmox-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< \
@@ -54,6 +55,9 @@ ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-
 	@./box-metadata.sh hyperv ubuntu-${VERSION}-amd64 $@
 
 # see https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/supported-ubuntu-virtual-machines-on-hyper-v
+# see https://packages.ubuntu.com/resolute/linux-image-virtual
+# see https://packages.ubuntu.com/resolute/linux-tools-virtual
+# see https://packages.ubuntu.com/resolute/linux-cloud-tools-virtual
 tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	cp -f $< $@
@@ -75,6 +79,7 @@ ubuntu-${VERSION}-amd64-vsphere.box: tmp/vsphere-autoinstall-cloud-init-data/use
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
+# see https://packages.ubuntu.com/resolute/open-vm-tools
 tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
