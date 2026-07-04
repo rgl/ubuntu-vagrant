@@ -58,8 +58,11 @@ def create_cloud_init_iso_trigger(config, group, cloud_init_user_data, cloud_ini
   cloud_init_data_path
 end
 
+# see https://docs.cloud-init.io/en/26.1/explanation/format/index.html
+# see https://docs.cloud-init.io/en/26.1/reference/network-config.html
+# see https://docs.cloud-init.io/en/26.1/reference/network-config-format-v2.html
 cloud_init_network_config = {
-  # Uncomment these properties to configure a static IP address.
+  # NB uncomment these properties to configure a static IP address.
   # 'version' => 2,
   # 'ethernets' => {
   #   'eth0' => {
@@ -67,7 +70,12 @@ cloud_init_network_config = {
   #     'addresses' => [
   #       '10.0.0.123/24',
   #     ],
-  #     'gateway4' => '10.0.0.1',
+  #     'routes' => [
+  #       {
+  #         'to' => '0.0.0.0/0',
+  #         'via' => '10.0.0.1',
+  #       },
+  #     ],
   #     'nameservers' => {
   #       'addresses' => [
   #         '10.0.0.1',
@@ -77,6 +85,8 @@ cloud_init_network_config = {
   # },
 }
 
+# see https://docs.cloud-init.io/en/26.1/reference/cloud-config.html
+# see https://docs.cloud-init.io/en/26.1/reference/modules.html
 cloud_init_user_data = {
   # modify the provisioning user credentials.
   'users' => [
