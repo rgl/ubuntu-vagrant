@@ -101,41 +101,11 @@ source "hyperv-iso" "ubuntu-uefi-amd64" {
   shutdown_command  = "sudo -S poweroff"
 }
 
-source "qemu" "ubuntu-amd64" {
-  accelerator = "kvm"
-  cd_label    = "cidata"
-  cd_files = [
-    "autoinstall-cloud-init-data/user-data",
-    "autoinstall-cloud-init-data/meta-data",
-  ]
-  machine_type   = "q35"
-  boot_command   = local.boot_command
-  boot_wait      = "5s"
-  disk_cache     = "unsafe"
-  disk_discard   = "unmap"
-  disk_interface = "virtio-scsi"
-  disk_size      = var.disk_size
-  format         = "qcow2"
-  headless       = true
-  net_device     = "virtio-net"
-  iso_checksum   = var.iso_checksum
-  iso_url        = var.iso_url
-  cpus           = 2
-  memory         = 4 * 1024
-  qemuargs = [
-    ["-cpu", "host"],
-  ]
-  ssh_username     = "vagrant"
-  ssh_password     = "vagrant"
-  ssh_timeout      = "60m"
-  shutdown_command = "sudo -S poweroff"
-}
-
 source "qemu" "ubuntu-uefi-amd64" {
   accelerator = "kvm"
   cd_label    = "cidata"
   cd_files = [
-    "tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
   machine_type      = "q35"
@@ -233,7 +203,6 @@ source "proxmox-iso" "ubuntu-uefi-amd64" {
 build {
   sources = [
     "source.hyperv-iso.ubuntu-uefi-amd64",
-    "source.qemu.ubuntu-amd64",
     "source.qemu.ubuntu-uefi-amd64",
     "source.proxmox-iso.ubuntu-uefi-amd64",
   ]
@@ -284,14 +253,6 @@ build {
       "hyperv-iso.ubuntu-uefi-amd64",
     ]
     scripts = ["provision-local-hyperv.cmd"]
-  }
-
-  post-processor "vagrant" {
-    only = [
-      "qemu.ubuntu-amd64",
-    ]
-    output               = var.vagrant_box
-    vagrantfile_template = "Vagrantfile.template"
   }
 
   post-processor "vagrant" {

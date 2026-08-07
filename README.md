@@ -10,7 +10,7 @@ Other Ubuntu versions might be available in a [separate branch](https://github.c
 
 ## Usage
 
-Install Packer 1.15+ and Vagrant 2.4+.
+Install Packer 1.16+ and Vagrant 2.4+.
 
 Depending on your host, follow its instructions:
 
@@ -211,7 +211,7 @@ export GOVC_DATASTORE='Datastore'
 export VSPHERE_OS_ISO="[$GOVC_DATASTORE] iso/ubuntu-26.04-live-server-amd64.iso"
 export VSPHERE_ESXI_HOST='esxi.local'
 export VSPHERE_TEMPLATE_FOLDER='test/templates'
-export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-26.04-amd64-vsphere"
+export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-26.04-uefi-amd64-vsphere"
 export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'
@@ -238,7 +238,7 @@ Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.pkr.hcl](u
 
 See the [example Vagrantfile](example/Vagrantfile) to see how you could use a cloud-init configuration to configure the VM.
 
-Type `make build-vsphere` and follow the instructions.
+Type `make build-uefi-vsphere` and follow the instructions.
 
 Try the example guest:
 

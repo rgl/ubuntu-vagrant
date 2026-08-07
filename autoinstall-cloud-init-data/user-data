@@ -32,62 +32,6 @@ write_files:
         efibootmgr -o "$ubuntu_boot_option"
       fi
     permissions: '0755'
-snippets:
-  storage-config-msdos: &storage-config-msdos
-    - id: disk-boot
-      type: disk
-      ptable: msdos
-      path: /dev/sda
-      grub_device: true
-    - id: partition-root
-      type: partition
-      device: disk-boot
-      number: 1
-      size: -1
-    - id: format-root
-      type: format
-      volume: partition-root
-      fstype: ext4
-      label: root
-    - id: mount-root
-      type: mount
-      device: format-root
-      path: /
-  storage-config-gpt: &storage-config-gpt
-    - id: disk-boot
-      type: disk
-      ptable: gpt
-      path: /dev/sda
-    - id: partition-esp
-      type: partition
-      device: disk-boot
-      number: 1
-      flag: boot
-      grub_device: true
-      size: 100MB
-    - id: partition-root
-      type: partition
-      device: disk-boot
-      number: 2
-      size: -1
-    - id: format-esp
-      type: format
-      volume: partition-esp
-      fstype: fat32
-      label: esp
-    - id: format-root
-      type: format
-      volume: partition-root
-      fstype: ext4
-      label: root
-    - id: mount-root
-      type: mount
-      device: format-root
-      path: /
-    - id: mount-esp
-      type: mount
-      device: format-esp
-      path: /boot/efi
 autoinstall:
   version: 1
   network:
@@ -123,4 +67,38 @@ autoinstall:
   packages:
     - openssh-server
   storage:
-    config: *storage-config-msdos
+    config:
+      - id: disk-boot
+        type: disk
+        ptable: gpt
+        path: /dev/sda
+      - id: partition-esp
+        type: partition
+        device: disk-boot
+        number: 1
+        flag: boot
+        grub_device: true
+        size: 100MB
+      - id: partition-root
+        type: partition
+        device: disk-boot
+        number: 2
+        size: -1
+      - id: format-esp
+        type: format
+        volume: partition-esp
+        fstype: fat32
+        label: esp
+      - id: format-root
+        type: format
+        volume: partition-root
+        fstype: ext4
+        label: root
+      - id: mount-root
+        type: mount
+        device: format-root
+        path: /
+      - id: mount-esp
+        type: mount
+        device: format-esp
+        path: /boot/efi
