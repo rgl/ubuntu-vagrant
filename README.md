@@ -124,7 +124,7 @@ source secrets-proxmox.sh
 Create the template:
 
 ```bash
-make build-proxmox
+make build-uefi-proxmox
 ```
 
 **NB** There is no way to use the created template with vagrant (the [vagrant-proxmox plugin](https://github.com/telcat/vagrant-proxmox) is no longer compatible with recent vagrant versions). Instead, use packer (e.g. see this repository) or terraform (e.g. see [rgl/terraform-proxmox-ubuntu-example](https://github.com/rgl/terraform-proxmox-ubuntu-example)).

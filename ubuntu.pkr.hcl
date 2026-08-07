@@ -166,8 +166,8 @@ source "qemu" "ubuntu-uefi-amd64" {
   shutdown_command = "sudo -S poweroff"
 }
 
-source "proxmox-iso" "ubuntu-amd64" {
-  template_name            = "template-ubuntu-${var.version}"
+source "proxmox-iso" "ubuntu-uefi-amd64" {
+  template_name            = "template-ubuntu-${var.version}-uefi"
   template_description     = <<-EOS
                               See https://github.com/rgl/ubuntu-vagrant
 
@@ -175,7 +175,7 @@ source "proxmox-iso" "ubuntu-amd64" {
                               Build At: ${timestamp()}
                               ```
                               EOS
-  tags                     = "ubuntu-${var.version};template"
+  tags                     = "ubuntu-${var.version}-uefi;template"
   insecure_skip_tls_verify = true
   node                     = var.proxmox_node
   machine                  = "q35"
@@ -219,7 +219,7 @@ source "proxmox-iso" "ubuntu-amd64" {
     iso_storage_pool = "local"
     cd_label         = "cidata"
     cd_files = [
-      "tmp/proxmox-autoinstall-cloud-init-data/user-data",
+      "tmp/proxmox-uefi-autoinstall-cloud-init-data/user-data",
       "autoinstall-cloud-init-data/meta-data",
     ]
     unmount = true
@@ -235,7 +235,7 @@ build {
     "source.hyperv-iso.ubuntu-uefi-amd64",
     "source.qemu.ubuntu-amd64",
     "source.qemu.ubuntu-uefi-amd64",
-    "source.proxmox-iso.ubuntu-amd64",
+    "source.proxmox-iso.ubuntu-uefi-amd64",
   ]
 
   provisioner "shell" {

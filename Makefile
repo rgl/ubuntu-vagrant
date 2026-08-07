@@ -4,11 +4,15 @@ SHELL=bash
 VERSION=26.04
 
 help:
-	@echo type make build-libvirt, make build-uefi-libvirt, make build-proxmox, make build-uefi-hyperv or make build-vsphere
+	@echo type one of:
+	@echo 	make build-libvirt or make build-uefi-libvirt
+	@echo 	make build-uefi-proxmox
+	@echo 	make build-uefi-hyperv
+	@echo 	make build-vsphere
 
 build-libvirt: ubuntu-${VERSION}-amd64-libvirt.box
 build-uefi-libvirt: ubuntu-${VERSION}-uefi-amd64-libvirt.box
-build-proxmox: ubuntu-${VERSION}-amd64-proxmox.box
+build-uefi-proxmox: ubuntu-${VERSION}-uefi-amd64-proxmox.box
 build-uefi-hyperv: ubuntu-${VERSION}-uefi-amd64-hyperv.box
 build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
@@ -32,15 +36,15 @@ tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-d
 	mkdir -p $(shell dirname $@)
 	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< >$@
 
-ubuntu-${VERSION}-amd64-proxmox.box: tmp/proxmox-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl
+ubuntu-${VERSION}-uefi-amd64-proxmox.box: tmp/proxmox-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
 		packer init ubuntu.pkr.hcl
 	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} PKR_VAR_vagrant_box=$@ \
-		packer build -only=proxmox-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
+		packer build -only=proxmox-iso.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
 
 # see https://packages.ubuntu.com/resolute/qemu-guest-agent
-tmp/proxmox-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+tmp/proxmox-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	sed -E 's,\*storage-config-msdos,*storage-config-gpt,g' $< \
 		| sed -E 's,((\s+)packages:),\1\n\2  - qemu-guest-agent,g' \
@@ -84,4 +88,4 @@ tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/u
 	mkdir -p $(shell dirname $@)
 	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
 
-.PHONY: help build-libvirt build-uefi-libvirt build-proxmox build-uefi-hyperv build-vsphere
+.PHONY: help build-libvirt build-uefi-libvirt build-uefi-proxmox build-uefi-hyperv build-vsphere
