@@ -251,4 +251,5 @@ Vagrant.configure(2) do |config|
   config.vm.provision 'shell', inline: 'lsblk -x KNAME -o KNAME,SIZE,TRAN,SUBSYSTEMS,FSTYPE,UUID,LABEL,MODEL,SERIAL', name: 'block devices'
   config.vm.provision 'shell', inline: 'df -h', name: 'disk space usage'
   config.vm.provision 'shell', inline: "dpkg-query -W -f='${binary:Package}\\n' | sort >/vagrant/#{config.vm.box}-packages.txt", name: 'package list'
+  config.vm.provision 'shell', path: 'generate-sbom.sh', args: [config.vm.box], name: 'generate sbom'
 end

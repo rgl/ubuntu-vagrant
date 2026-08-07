@@ -7,3 +7,5 @@ tmp/
 output*
 *-packages.txt
 secrets*
+*-sbom*.json
+*-sbom*.html
