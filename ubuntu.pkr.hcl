@@ -75,10 +75,10 @@ locals {
   ]
 }
 
-source "hyperv-iso" "ubuntu-amd64" {
+source "hyperv-iso" "ubuntu-uefi-amd64" {
   cd_label = "cidata"
   cd_files = [
-    "tmp/hyperv-autoinstall-cloud-init-data/user-data",
+    "tmp/hyperv-uefi-autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
   boot_command      = local.boot_command
@@ -88,7 +88,7 @@ source "hyperv-iso" "ubuntu-amd64" {
   cpus              = 2
   memory            = 4 * 1024
   disk_size         = var.disk_size
-  generation        = 2
+  generation        = 2 # UEFI.
   headless          = true
   iso_checksum      = var.iso_checksum
   iso_url           = var.iso_url
@@ -232,7 +232,7 @@ source "proxmox-iso" "ubuntu-amd64" {
 
 build {
   sources = [
-    "source.hyperv-iso.ubuntu-amd64",
+    "source.hyperv-iso.ubuntu-uefi-amd64",
     "source.qemu.ubuntu-amd64",
     "source.qemu.ubuntu-uefi-amd64",
     "source.proxmox-iso.ubuntu-amd64",
@@ -281,7 +281,7 @@ build {
       "PACKER_VM_NAME=${build.ID}",
     ]
     only = [
-      "hyperv-iso.ubuntu-amd64",
+      "hyperv-iso.ubuntu-uefi-amd64",
     ]
     scripts = ["provision-local-hyperv.cmd"]
   }
@@ -289,7 +289,6 @@ build {
   post-processor "vagrant" {
     only = [
       "qemu.ubuntu-amd64",
-      "hyperv-iso.ubuntu-amd64",
     ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile.template"
@@ -298,6 +297,7 @@ build {
   post-processor "vagrant" {
     only = [
       "qemu.ubuntu-uefi-amd64",
+      "hyperv-iso.ubuntu-uefi-amd64",
     ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile-uefi.template"

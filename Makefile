@@ -4,12 +4,12 @@ SHELL=bash
 VERSION=26.04
 
 help:
-	@echo type make build-libvirt, make build-uefi-libvirt, make build-proxmox, make build-hyperv or make build-vsphere
+	@echo type make build-libvirt, make build-uefi-libvirt, make build-proxmox, make build-uefi-hyperv or make build-vsphere
 
 build-libvirt: ubuntu-${VERSION}-amd64-libvirt.box
 build-uefi-libvirt: ubuntu-${VERSION}-uefi-amd64-libvirt.box
 build-proxmox: ubuntu-${VERSION}-amd64-proxmox.box
-build-hyperv: ubuntu-${VERSION}-amd64-hyperv.box
+build-uefi-hyperv: ubuntu-${VERSION}-uefi-amd64-hyperv.box
 build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
 
 ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
@@ -46,19 +46,19 @@ tmp/proxmox-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/u
 		| sed -E 's,((\s+)packages:),\1\n\2  - qemu-guest-agent,g' \
 		>$@
 
-ubuntu-${VERSION}-amd64-hyperv.box: tmp/hyperv-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
+ubuntu-${VERSION}-uefi-amd64-hyperv.box: tmp/hyperv-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile-uefi.template
 	rm -f $@
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
 		packer init ubuntu.pkr.hcl
 	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} PKR_VAR_vagrant_box=$@ \
-		packer build -only=hyperv-iso.ubuntu-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
-	@./box-metadata.sh hyperv ubuntu-${VERSION}-amd64 $@
+		packer build -only=hyperv-iso.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu.pkr.hcl
+	@./box-metadata.sh hyperv ubuntu-${VERSION}-uefi-amd64 $@
 
 # see https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/supported-ubuntu-virtual-machines-on-hyper-v
 # see https://packages.ubuntu.com/resolute/linux-image-virtual
 # see https://packages.ubuntu.com/resolute/linux-tools-virtual
 # see https://packages.ubuntu.com/resolute/linux-cloud-tools-virtual
-tmp/hyperv-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+tmp/hyperv-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	cp -f $< $@
 	sed -i -E 's,\*storage-config-msdos,*storage-config-gpt,g' $@
@@ -84,4 +84,4 @@ tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/u
 	mkdir -p $(shell dirname $@)
 	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
 
-.PHONY: help build-libvirt build-uefi-libvirt build-proxmox build-hyperv build-vsphere
+.PHONY: help build-libvirt build-uefi-libvirt build-proxmox build-uefi-hyperv build-vsphere

@@ -169,7 +169,7 @@ export VAGRANT_SMB_PASSWORD=''
 PowerShell -Command 'Set-NetFirewallProfile -DisabledInterfaceAliases (Get-NetAdapter -name "vEthernet*" | Where-Object {$_.ifIndex}).InterfaceAlias'
 EOF
 source secrets-hyperv.sh
-make build-hyperv
+make build-uefi-hyperv
 ```
 
 Try the example guest:
