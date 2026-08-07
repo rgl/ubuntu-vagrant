@@ -8,13 +8,14 @@ help:
 	@echo 	make build-libvirt or make build-uefi-libvirt
 	@echo 	make build-uefi-proxmox
 	@echo 	make build-uefi-hyperv
-	@echo 	make build-vsphere
+	@echo 	make build-vsphere or make build-uefi-vsphere
 
 build-libvirt: ubuntu-${VERSION}-amd64-libvirt.box
 build-uefi-libvirt: ubuntu-${VERSION}-uefi-amd64-libvirt.box
 build-uefi-proxmox: ubuntu-${VERSION}-uefi-amd64-proxmox.box
 build-uefi-hyperv: ubuntu-${VERSION}-uefi-amd64-hyperv.box
 build-vsphere: ubuntu-${VERSION}-amd64-vsphere.box
+build-uefi-vsphere: ubuntu-${VERSION}-uefi-amd64-vsphere.box
 
 ubuntu-${VERSION}-amd64-libvirt.box: autoinstall-cloud-init-data/* provision.sh ubuntu.pkr.hcl Vagrantfile.template
 	rm -f $@
@@ -83,9 +84,29 @@ ubuntu-${VERSION}-amd64-vsphere.box: tmp/vsphere-autoinstall-cloud-init-data/use
 	@echo to add to local vagrant install do:
 	@echo vagrant box add -f ubuntu-${VERSION}-amd64 $@
 
+ubuntu-${VERSION}-uefi-amd64-vsphere.box: tmp/vsphere-uefi-autoinstall-cloud-init-data/user-data autoinstall-cloud-init-data/* provision.sh ubuntu-vsphere.pkr.hcl Vagrantfile-uefi.template
+	rm -f $@
+	CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.init.log \
+		packer init ubuntu-vsphere.pkr.hcl
+	PACKER_KEY_INTERVAL=10ms CHECKPOINT_DISABLE=1 PACKER_LOG=1 PACKER_LOG_PATH=$@.log PKR_VAR_version=${VERSION} \
+		packer build -only=vsphere-iso.ubuntu-uefi-amd64 -on-error=abort -timestamp-ui ubuntu-vsphere.pkr.hcl
+	rm -rf tmp/$@-contents
+	mkdir -p tmp/$@-contents
+	echo '{"provider":"vsphere"}' >tmp/$@-contents/metadata.json
+	cp Vagrantfile-uefi.template tmp/$@-contents/Vagrantfile
+	tar cvf $@ -C tmp/$@-contents .
+	@echo BOX successfully built!
+	@echo to add to local vagrant install do:
+	@echo vagrant box add -f ubuntu-${VERSION}-uefi-amd64 $@
+
 # see https://packages.ubuntu.com/resolute/open-vm-tools
 tmp/vsphere-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
 	mkdir -p $(shell dirname $@)
 	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
 
-.PHONY: help build-libvirt build-uefi-libvirt build-uefi-proxmox build-uefi-hyperv build-vsphere
+# see https://packages.ubuntu.com/resolute/open-vm-tools
+tmp/vsphere-uefi-autoinstall-cloud-init-data/user-data: autoinstall-cloud-init-data/user-data
+	mkdir -p $(shell dirname $@)
+	sed -E 's,((.+)- openssh-server.*),\1\n\2- open-vm-tools,g' $< >$@
+
+.PHONY: help build-libvirt build-uefi-libvirt build-uefi-proxmox build-uefi-hyperv build-vsphere build-uefi-vsphere

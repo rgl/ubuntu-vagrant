@@ -129,8 +129,53 @@ source "vsphere-iso" "ubuntu-amd64" {
   shutdown_command     = "sudo -S poweroff"
 }
 
+source "vsphere-iso" "ubuntu-uefi-amd64" {
+  firmware = "efi"
+  CPUs     = 4
+  RAM      = 4 * 1024
+  cd_label = "cidata"
+  cd_files = [
+    "tmp/vsphere-uefi-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/meta-data"
+  ]
+  boot_command        = local.boot_command
+  boot_wait           = "5s"
+  convert_to_template = true
+  insecure_connection = true
+  vcenter_server      = var.vsphere_host
+  username            = var.vsphere_username
+  password            = var.vsphere_password
+  vm_name             = "ubuntu-${var.version}-uefi-amd64-vsphere"
+  datacenter          = var.vsphere_datacenter
+  cluster             = var.vsphere_cluster
+  host                = var.vsphere_esxi_host
+  folder              = var.vsphere_folder
+  datastore           = var.vsphere_datastore
+  guest_os_type       = "ubuntu64Guest"
+  ip_wait_address     = var.vsphere_ip_wait_address
+  iso_paths = [
+    var.vsphere_os_iso
+  ]
+  network_adapters {
+    network      = var.vsphere_network
+    network_card = "vmxnet3"
+  }
+  storage {
+    disk_size             = var.disk_size
+    disk_thin_provisioned = true
+  }
+  disk_controller_type = ["pvscsi"]
+  ssh_password         = "vagrant"
+  ssh_username         = "vagrant"
+  ssh_timeout          = "60m"
+  shutdown_command     = "sudo -S poweroff"
+}
+
 build {
-  sources = ["source.vsphere-iso.ubuntu-amd64"]
+  sources = [
+    "source.vsphere-iso.ubuntu-amd64",
+    "source.vsphere-iso.ubuntu-uefi-amd64",
+  ]
 
   provisioner "shell" {
     execute_command = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"
