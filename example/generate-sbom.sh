@@ -9,7 +9,7 @@ SYFT_VERSION='1.50.0'
 
 # see https://github.com/anchore/grype/releases
 # renovate: datasource=github-releases depName=anchore/grype
-GRYPE_VERSION='0.116.1'
+GRYPE_VERSION='0.117.0'
 
 # download and install syft.
 if ! command -v syft >/dev/null 2>&1; then
