@@ -5,7 +5,7 @@ name_prefix="${1:-ubuntu-26.04-uefi-amd64}"
 
 # see https://github.com/anchore/syft/releases
 # renovate: datasource=github-releases depName=anchore/syft
-SYFT_VERSION='1.51.0'
+SYFT_VERSION='1.51.1'
 
 # see https://github.com/anchore/grype/releases
 # renovate: datasource=github-releases depName=anchore/grype
