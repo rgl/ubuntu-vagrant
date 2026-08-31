@@ -34,12 +34,12 @@ variable "disk_size" {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/26.04/ubuntu-26.04-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/26.04/ubuntu-26.04.1-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:dec49008a71f6098d0bcfc822021f4d042d5f2db279e4d75bdd981304f1ca5d9"
+  default = "sha256:cc8a95cde20f6ced61a322420de00f10cc3c90ced545daa46cb9c1a117f1d927"
 }
 
 variable "proxmox_node" {
