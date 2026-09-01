@@ -2,7 +2,7 @@ packer {
   required_plugins {
     # see https://github.com/vmware/packer-plugin-vsphere
     vsphere = {
-      version = "2.1.2"
+      version = "2.4.0"
       source  = "github.com/vmware/vsphere"
     }
   }
@@ -88,12 +88,13 @@ locals {
   ]
 }
 
-source "vsphere-iso" "ubuntu-amd64" {
+source "vsphere-iso" "ubuntu-uefi-amd64" {
+  firmware = "efi"
   CPUs     = 4
-  RAM      = 2048
+  RAM      = 4 * 1024
   cd_label = "cidata"
   cd_files = [
-    "tmp/vsphere-autoinstall-cloud-init-data/user-data",
+    "tmp/vsphere-uefi-autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data"
   ]
   boot_command        = local.boot_command
@@ -103,7 +104,7 @@ source "vsphere-iso" "ubuntu-amd64" {
   vcenter_server      = var.vsphere_host
   username            = var.vsphere_username
   password            = var.vsphere_password
-  vm_name             = "ubuntu-${var.version}-amd64-vsphere"
+  vm_name             = "ubuntu-${var.version}-uefi-amd64-vsphere"
   datacenter          = var.vsphere_datacenter
   cluster             = var.vsphere_cluster
   host                = var.vsphere_esxi_host
@@ -130,7 +131,9 @@ source "vsphere-iso" "ubuntu-amd64" {
 }
 
 build {
-  sources = ["source.vsphere-iso.ubuntu-amd64"]
+  sources = [
+    "source.vsphere-iso.ubuntu-uefi-amd64",
+  ]
 
   provisioner "shell" {
     execute_command = "echo vagrant | sudo -S {{ .Vars }} bash {{ .Path }}"

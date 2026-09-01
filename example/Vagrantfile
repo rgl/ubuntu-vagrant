@@ -1,5 +1,6 @@
 ENV['VAGRANT_EXPERIMENTAL'] = 'typed_triggers'
 
+require 'open3'
 require 'base64'
 require 'digest/sha1'
 require 'fileutils'
@@ -22,7 +23,8 @@ end
 
 # add the cloud-init data as a NoCloud cloud-init iso.
 # NB libvirtd libvirt-qemu:kvm MUST have read permissions to the iso file path.
-# see https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
+# see https://docs.cloud-init.io/en/26.1/reference/datasources/nocloud.html
+# see https://packages.ubuntu.com/noble/cloud-init
 def create_cloud_init_iso(cloud_init_data_path, env, config, group, cloud_init_user_data, cloud_init_network_config)
   if !File.exist?(cloud_init_data_path) || File.mtime(cloud_init_data_path) < File.mtime(__FILE__)
     cloud_init_data_parent_path = File.dirname(cloud_init_data_path)
@@ -57,8 +59,11 @@ def create_cloud_init_iso_trigger(config, group, cloud_init_user_data, cloud_ini
   cloud_init_data_path
 end
 
+# see https://docs.cloud-init.io/en/26.1/explanation/format/index.html
+# see https://docs.cloud-init.io/en/26.1/reference/network-config.html
+# see https://docs.cloud-init.io/en/26.1/reference/network-config-format-v2.html
 cloud_init_network_config = {
-  # Uncomment these properties to configure a static IP address.
+  # NB uncomment these properties to configure a static IP address.
   # 'version' => 2,
   # 'ethernets' => {
   #   'eth0' => {
@@ -66,7 +71,12 @@ cloud_init_network_config = {
   #     'addresses' => [
   #       '10.0.0.123/24',
   #     ],
-  #     'gateway4' => '10.0.0.1',
+  #     'routes' => [
+  #       {
+  #         'to' => '0.0.0.0/0',
+  #         'via' => '10.0.0.1',
+  #       },
+  #     ],
   #     'nameservers' => {
   #       'addresses' => [
   #         '10.0.0.1',
@@ -76,6 +86,8 @@ cloud_init_network_config = {
   # },
 }
 
+# see https://docs.cloud-init.io/en/26.1/reference/cloud-config.html
+# see https://docs.cloud-init.io/en/26.1/reference/modules.html
 cloud_init_user_data = {
   # modify the provisioning user credentials.
   'users' => [
@@ -92,8 +104,7 @@ cloud_init_user_data = {
 }
 
 Vagrant.configure(2) do |config|
-  config.vm.box = 'ubuntu-24.04-amd64'
-  #config.vm.box = 'ubuntu-24.04-uefi-amd64'
+  config.vm.box = 'ubuntu-24.04-uefi-amd64'
 
   config.vm.hostname = 'example.test'
 
@@ -176,7 +187,7 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.provider 'vsphere' do |vsphere, override|
+  config.vm.provider 'vsphere' do |vsphere, config|
     vsphere.name = ENV['VSPHERE_VM_NAME']
     vsphere.notes = "Created from #{__FILE__}"
     vsphere.cpu_count = $vm_cpus
@@ -192,9 +203,11 @@ Vagrant.configure(2) do |config|
     vsphere.vm_base_path = ENV['VSPHERE_VM_FOLDER']
     vsphere.vlan = ENV['VSPHERE_VLAN']
     # NB the extra_config data ends-up inside the VM .vmx file.
-    # NB the guestinfo properties will be exposed by cloud-init-vmware-guestinfo
-    #    as a cloud-init datasource.
-    # See https://github.com/vmware/cloud-init-vmware-guestinfo
+    # NB the guestinfo properties are used by the VMware cloud-init datasource.
+    # see https://docs.cloud-init.io/en/26.1/reference/datasources/vmware.html
+    # see https://github.com/canonical/cloud-init/blob/26.1/cloudinit/sources/DataSourceVMware.py
+    # see /usr/lib/python3/dist-packages/cloudinit/sources/DataSourceVMware.py
+    # see https://packages.ubuntu.com/noble/cloud-init
     vsphere.extra_config = {
       'guestinfo.metadata' => gzip_base64({
         'network' => gzip_base64(cloud_init_network_config.to_json),
@@ -205,20 +218,37 @@ Vagrant.configure(2) do |config|
       'guestinfo.userdata.encoding' => 'gzip+base64',
     }
     if ENV['VAGRANT_SMB_PASSWORD']
-      override.vm.synced_folder '.', '/vagrant',
+      config.vm.synced_folder '.', '/vagrant',
         type: 'smb',
         smb_username: ENV['VAGRANT_SMB_USERNAME'] || ENV['USER'],
         smb_password: ENV['VAGRANT_SMB_PASSWORD']
     end
+    config.trigger.after :'VagrantPlugins::VSphere::Action::Clone', type: :action do |trigger|
+      trigger.info = 'Setting the disk size...'
+      trigger.ruby do |env, machine|
+        stdout, stderr, status = Open3.capture3(
+          'govc',
+          'vm.disk.change',
+          '-vm.uuid', machine.id,
+          '-disk.name', 'disk-1000-0',
+          '-size', "#{$vm_disk}GB")
+        if status.exitstatus != 0
+          raise "failed to set the disk size. status=#{status.exitstatus} stdout=#{stdout} stderr=#{stderr}"
+        end
+      end
+    end
   end
 
+  config.vm.provision 'shell', inline: 'cloud-init schema --system --annotate', name: 'validate cloud-init schema'
   config.vm.provision 'shell', inline: 'cloud-init status --long --wait', name: 'wait for cloud-init to finish'
   config.vm.provision 'shell', inline: 'echo "firmware type is $([ -d /sys/firmware/efi ] && echo \'UEFI\' || echo \'BIOS\')"', name: 'firmware type'
   config.vm.provision 'shell', inline: "echo \"provisioning user is $(id #{$provision_username})\""
   config.vm.provision 'shell', inline: 'echo "machine-id is $(cat /etc/machine-id)"'
+  config.vm.provision 'shell', inline: 'echo "kernel is $(uname -a)"'
   config.vm.provision 'shell', inline: 'cat /etc/os-release', name: 'os-release'
   config.vm.provision 'shell', inline: 'sfdisk -l', name: 'disk partitions'
   config.vm.provision 'shell', inline: 'lsblk -x KNAME -o KNAME,SIZE,TRAN,SUBSYSTEMS,FSTYPE,UUID,LABEL,MODEL,SERIAL', name: 'block devices'
   config.vm.provision 'shell', inline: 'df -h', name: 'disk space usage'
   config.vm.provision 'shell', inline: "dpkg-query -W -f='${binary:Package}\\n' | sort >/vagrant/#{config.vm.box}-packages.txt", name: 'package list'
+  config.vm.provision 'shell', path: 'generate-sbom.sh', args: [config.vm.box], name: 'generate sbom'
 end

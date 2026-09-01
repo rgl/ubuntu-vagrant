@@ -4,13 +4,13 @@
 
 This builds an up-to-date Vagrant Ubuntu Base Box as described at the [From Iso To Vagrant Box](http://blog.ruilopes.com/from-iso-to-vagrant-box.html) article.
 
-Currently this targets [Ubuntu 24.04 (Noble Numbat)](https://wiki.ubuntu.com/NobleNumbat/ReleaseNotes).
+Currently this targets [Ubuntu 24.04 (Noble Numbat)](https://documentation.ubuntu.com/release-notes/24.04/).
 
 Other Ubuntu versions might be available in a [separate branch](https://github.com/rgl/ubuntu-vagrant/branches).
 
 ## Usage
 
-Install Packer 1.14+ and Vagrant 2.4+.
+Install Packer 1.16+ and Vagrant 2.4+.
 
 Depending on your host, follow its instructions:
 
@@ -124,7 +124,7 @@ source secrets-proxmox.sh
 Create the template:
 
 ```bash
-make build-proxmox
+make build-uefi-proxmox
 ```
 
 **NB** There is no way to use the created template with vagrant (the [vagrant-proxmox plugin](https://github.com/telcat/vagrant-proxmox) is no longer compatible with recent vagrant versions). Instead, use packer (e.g. see this repository) or terraform (e.g. see [rgl/terraform-proxmox-ubuntu-example](https://github.com/rgl/terraform-proxmox-ubuntu-example)).
@@ -169,7 +169,7 @@ export VAGRANT_SMB_PASSWORD=''
 PowerShell -Command 'Set-NetFirewallProfile -DisabledInterfaceAliases (Get-NetAdapter -name "vEthernet*" | Where-Object {$_.ifIndex}).InterfaceAlias'
 EOF
 source secrets-hyperv.sh
-make build-hyperv
+make build-uefi-hyperv
 ```
 
 Try the example guest:
@@ -211,7 +211,7 @@ export GOVC_DATASTORE='Datastore'
 export VSPHERE_OS_ISO="[$GOVC_DATASTORE] iso/ubuntu-24.04.4-live-server-amd64.iso"
 export VSPHERE_ESXI_HOST='esxi.local'
 export VSPHERE_TEMPLATE_FOLDER='test/templates'
-export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-24.04-amd64-vsphere"
+export VSPHERE_TEMPLATE_NAME="$VSPHERE_TEMPLATE_FOLDER/ubuntu-24.04-uefi-amd64-vsphere"
 export VSPHERE_VM_FOLDER='test'
 export VSPHERE_VM_NAME='ubuntu-vagrant-example'
 export VSPHERE_VLAN='packer'
@@ -238,7 +238,7 @@ Download the Ubuntu ISO (you can find the full iso URL in the [ubuntu.pkr.hcl](u
 
 See the [example Vagrantfile](example/Vagrantfile) to see how you could use a cloud-init configuration to configure the VM.
 
-Type `make build-vsphere` and follow the instructions.
+Type `make build-uefi-vsphere` and follow the instructions.
 
 Try the example guest:
 

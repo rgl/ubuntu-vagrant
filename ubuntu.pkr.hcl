@@ -2,7 +2,7 @@ packer {
   required_plugins {
     # see https://github.com/hashicorp/packer-plugin-qemu
     qemu = {
-      version = "1.1.4"
+      version = "1.1.6"
       source  = "github.com/hashicorp/qemu"
     }
     # see https://github.com/hashicorp/packer-plugin-proxmox
@@ -17,7 +17,7 @@ packer {
     }
     # see https://github.com/hashicorp/packer-plugin-vagrant
     vagrant = {
-      version = "1.1.6"
+      version = "1.1.7"
       source  = "github.com/hashicorp/vagrant"
     }
   }
@@ -75,10 +75,10 @@ locals {
   ]
 }
 
-source "hyperv-iso" "ubuntu-amd64" {
+source "hyperv-iso" "ubuntu-uefi-amd64" {
   cd_label = "cidata"
   cd_files = [
-    "tmp/hyperv-autoinstall-cloud-init-data/user-data",
+    "tmp/hyperv-uefi-autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
   boot_command      = local.boot_command
@@ -86,9 +86,9 @@ source "hyperv-iso" "ubuntu-amd64" {
   boot_order        = ["SCSI:0:0"]
   first_boot_device = "DVD"
   cpus              = 2
-  memory            = 2048
+  memory            = 4 * 1024
   disk_size         = var.disk_size
-  generation        = 2
+  generation        = 2 # UEFI.
   headless          = true
   iso_checksum      = var.iso_checksum
   iso_url           = var.iso_url
@@ -101,41 +101,11 @@ source "hyperv-iso" "ubuntu-amd64" {
   shutdown_command  = "sudo -S poweroff"
 }
 
-source "qemu" "ubuntu-amd64" {
-  accelerator = "kvm"
-  cd_label    = "cidata"
-  cd_files = [
-    "autoinstall-cloud-init-data/user-data",
-    "autoinstall-cloud-init-data/meta-data",
-  ]
-  machine_type   = "q35"
-  boot_command   = local.boot_command
-  boot_wait      = "5s"
-  disk_cache     = "unsafe"
-  disk_discard   = "unmap"
-  disk_interface = "virtio-scsi"
-  disk_size      = var.disk_size
-  format         = "qcow2"
-  headless       = true
-  net_device     = "virtio-net"
-  iso_checksum   = var.iso_checksum
-  iso_url        = var.iso_url
-  cpus           = 2
-  memory         = 2048
-  qemuargs = [
-    ["-cpu", "host"],
-  ]
-  ssh_username     = "vagrant"
-  ssh_password     = "vagrant"
-  ssh_timeout      = "60m"
-  shutdown_command = "sudo -S poweroff"
-}
-
 source "qemu" "ubuntu-uefi-amd64" {
   accelerator = "kvm"
   cd_label    = "cidata"
   cd_files = [
-    "tmp/libvirt-uefi-autoinstall-cloud-init-data/user-data",
+    "autoinstall-cloud-init-data/user-data",
     "autoinstall-cloud-init-data/meta-data",
   ]
   machine_type      = "q35"
@@ -153,7 +123,7 @@ source "qemu" "ubuntu-uefi-amd64" {
   iso_checksum      = var.iso_checksum
   iso_url           = var.iso_url
   cpus              = 2
-  memory            = 2048
+  memory            = 4 * 1024
   qemuargs = [
     ["-cpu", "host"],
     ["-device", "virtio-vga"],
@@ -166,8 +136,8 @@ source "qemu" "ubuntu-uefi-amd64" {
   shutdown_command = "sudo -S poweroff"
 }
 
-source "proxmox-iso" "ubuntu-amd64" {
-  template_name            = "template-ubuntu-${var.version}"
+source "proxmox-iso" "ubuntu-uefi-amd64" {
+  template_name            = "template-ubuntu-${var.version}-uefi"
   template_description     = <<-EOS
                               See https://github.com/rgl/ubuntu-vagrant
 
@@ -175,7 +145,7 @@ source "proxmox-iso" "ubuntu-amd64" {
                               Build At: ${timestamp()}
                               ```
                               EOS
-  tags                     = "ubuntu-${var.version};template"
+  tags                     = "ubuntu-${var.version}-uefi;template"
   insecure_skip_tls_verify = true
   node                     = var.proxmox_node
   machine                  = "q35"
@@ -187,7 +157,7 @@ source "proxmox-iso" "ubuntu-amd64" {
   }
   cpu_type = "host"
   cores    = 2
-  memory   = 2 * 1024
+  memory   = 4 * 1024
   vga {
     type   = "qxl"
     memory = 16
@@ -219,7 +189,7 @@ source "proxmox-iso" "ubuntu-amd64" {
     iso_storage_pool = "local"
     cd_label         = "cidata"
     cd_files = [
-      "tmp/proxmox-autoinstall-cloud-init-data/user-data",
+      "tmp/proxmox-uefi-autoinstall-cloud-init-data/user-data",
       "autoinstall-cloud-init-data/meta-data",
     ]
     unmount = true
@@ -232,10 +202,9 @@ source "proxmox-iso" "ubuntu-amd64" {
 
 build {
   sources = [
-    "source.hyperv-iso.ubuntu-amd64",
-    "source.qemu.ubuntu-amd64",
+    "source.hyperv-iso.ubuntu-uefi-amd64",
     "source.qemu.ubuntu-uefi-amd64",
-    "source.proxmox-iso.ubuntu-amd64",
+    "source.proxmox-iso.ubuntu-uefi-amd64",
   ]
 
   provisioner "shell" {
@@ -281,23 +250,15 @@ build {
       "PACKER_VM_NAME=${build.ID}",
     ]
     only = [
-      "hyperv-iso.ubuntu-amd64",
+      "hyperv-iso.ubuntu-uefi-amd64",
     ]
     scripts = ["provision-local-hyperv.cmd"]
   }
 
   post-processor "vagrant" {
     only = [
-      "qemu.ubuntu-amd64",
-      "hyperv-iso.ubuntu-amd64",
-    ]
-    output               = var.vagrant_box
-    vagrantfile_template = "Vagrantfile.template"
-  }
-
-  post-processor "vagrant" {
-    only = [
       "qemu.ubuntu-uefi-amd64",
+      "hyperv-iso.ubuntu-uefi-amd64",
     ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile-uefi.template"
