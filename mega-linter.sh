@@ -4,7 +4,7 @@ set -euo pipefail
 image_name='ghcr.io/oxsecurity/megalinter'
 # see https://github.com/oxsecurity/megalinter/pkgs/container/megalinter/versions?filters%5Bversion_type%5D=tagged
 # renovate: datasource=github-releases depName=oxsecurity/megalinter
-image_version='9.6.0'
+image_version='10.1.0'
 
 # see https://megalinter.io/latest/configuration/
 # see https://megalinter.io/latest/descriptors/powershell/
